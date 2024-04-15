@@ -4,7 +4,7 @@ services:
     image: postgres
     restart: always
     environment:
-      POSTGRES_DB: nnpia
+      POSTGRES_DB: eshop
       POSTGRES_USER: nnpia
       POSTGRES_PASSWORD: nnpia
     ports:

@@ -4,12 +4,15 @@ server:
     context-path: /api/v1
 spring:
   datasource:
-    url: jdbc:postgresql://localhost:5432/nnpia
+    url: jdbc:postgresql://localhost:5432/eshop
     username: nnpia
     password: nnpia
   jpa:
     hibernate:
-      ddl-auto: create
+      ddl-auto: update
       properties:
         hibernate:
           dialect: org.hibernate.dialect.PostgreSQL81Dialect
+security:
+  jwt:
+    secret-key: turbospecialnikodovaciheslolukasjetoxic

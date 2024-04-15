@@ -13,6 +13,7 @@ public class InputAppUserDtoV1 {
     @NotEmpty
     @Size(max = 255)
     private String username;
+    private String email;
     private String password;
     private boolean active;
 }

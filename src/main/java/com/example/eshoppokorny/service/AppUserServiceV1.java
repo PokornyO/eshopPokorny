@@ -38,6 +38,11 @@ public class AppUserServiceV1 implements AppUserService {
     }
 
     @Override
+    public Optional<AppUser> findUserByUsername(String username) {
+        return repository.findAppUsersByUsername(username);
+    }
+
+    @Override
     public AppUser createAppUse(InputAppUserDtoV1 inputUser) {
         AppUser user = new AppUser(inputUser.getUsername(), inputUser.getPassword(), inputUser.isActive(), new Date(), new Date());
         return repository.save(user);

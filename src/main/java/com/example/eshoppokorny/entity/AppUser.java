@@ -19,6 +19,7 @@ import java.util.List;
 
         private String username;
         private String password;
+        private String email;
         private boolean active;
         private Date creation_date;
         private Date update_date;

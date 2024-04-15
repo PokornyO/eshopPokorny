@@ -7,35 +7,42 @@ import com.example.eshoppokorny.exceptions.AppUserException;
 import com.example.eshoppokorny.mapper.AppUserMapperV1;
 import com.example.eshoppokorny.service.AppUserService;
 import jakarta.validation.Valid;
+import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
 @RestController
+@AllArgsConstructor
 public class AppUserController {
     private final AppUserService service;
+    private final PasswordEncoder encoder;
 
-    public AppUserController(AppUserService service) {
-        this.service = service;
-    }
 
     @GetMapping("/app-user/active")
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     public List<AppUser> getActiveUsers() {
         List<AppUser> users = service.getActiveUsers(true);
         return service.getActiveUsers(true);
     }
     @GetMapping("/app-user/role/{role}")
-    public List<AppUser> getProductById(@PathVariable String role) {
+    public List<AppUser> getUserByID(@PathVariable String role) {
         return service.findUsersByRole(role);
     }
     @GetMapping("/app-user/{id}")
+    @PreAuthorize("hasRole('ROLE_USER')")
     public ResponseEntity<AppUserDtoV1> getUserById(@PathVariable Long id) throws AppUserException {
         return ResponseEntity.ok(AppUserMapperV1.mapAppUserToAppUserDto(service.findUserById(id)));
     }
     @PostMapping("app-user")
     public ResponseEntity<AppUserDtoV1> createUser(@Valid @RequestBody InputAppUserDtoV1 inputUser) {
+        String encodedPassword = encoder.encode(inputUser.getPassword());
+        inputUser.setPassword(encodedPassword);
         return new ResponseEntity<>(AppUserMapperV1.mapAppUserToAppUserDto(service.createAppUse(inputUser)), HttpStatus.CREATED);
     }
     @PutMapping("app-user/{id}")
