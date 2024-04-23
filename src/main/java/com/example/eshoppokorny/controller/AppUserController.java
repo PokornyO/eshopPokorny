@@ -15,6 +15,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @RestController
@@ -29,6 +30,15 @@ public class AppUserController {
     public List<AppUser> getActiveUsers() {
         List<AppUser> users = service.getActiveUsers(true);
         return service.getActiveUsers(true);
+    }
+    @GetMapping("/app-user")
+    public ResponseEntity<List<AppUserDtoV1>> getAppUsers() {
+        List<AppUser> appUsers = service.getAllAppUsers();
+        List<AppUserDtoV1> appUsersDtoV1 = new ArrayList<>();
+        for(AppUser user: appUsers) {
+            appUsersDtoV1.add(AppUserMapperV1.mapAppUserToAppUserDto(user));
+        }
+        return ResponseEntity.ok(appUsersDtoV1);
     }
     @GetMapping("/app-user/role/{role}")
     public List<AppUser> getUserByID(@PathVariable String role) {

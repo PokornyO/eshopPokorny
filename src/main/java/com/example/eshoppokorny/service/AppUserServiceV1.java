@@ -29,6 +29,11 @@ public class AppUserServiceV1 implements AppUserService {
     }
 
     @Override
+    public List<AppUser> getAllAppUsers() {
+        return repository.findAll();
+    }
+
+    @Override
     public AppUser findUserById(Long id) throws AppUserException {
         Optional<AppUser> appUser = repository.findById(id);
         if(appUser.isEmpty()) {

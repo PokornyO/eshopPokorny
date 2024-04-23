@@ -11,7 +11,6 @@ public class AppUserDtoV1 {
     private long id;
     private String username;
     private String email;
-    private String password;
     private boolean active;
     private Date creation_date;
     private Date update_date;

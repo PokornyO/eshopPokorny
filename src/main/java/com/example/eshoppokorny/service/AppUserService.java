@@ -10,6 +10,7 @@ import java.util.Optional;
 public interface AppUserService {
     List<AppUser> getActiveUsers(Boolean active);
     List<AppUser> findUsersByRole(String role);
+    List<AppUser> getAllAppUsers();
     AppUser findUserById(Long id) throws AppUserException;
     Optional<AppUser> findUserByUsername(String username);
     AppUser createAppUse(InputAppUserDtoV1 inputUser);
