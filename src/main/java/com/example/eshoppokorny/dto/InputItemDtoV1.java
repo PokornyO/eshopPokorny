@@ -11,4 +11,5 @@ public class InputItemDtoV1 {
     private String name;
     private int inStockCount;
     private String description;
+    private String image;
 }

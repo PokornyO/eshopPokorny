@@ -20,13 +20,16 @@ public class Item {
     private String name;
     private int inStockCount;
     private String description;
+    @Lob
+    private byte[] image;
     @OneToMany(mappedBy = "id")
     private Set<EOrderItem> orderItems;
-    public Item(double price, String name, int inStockCount, String description) {
+    public Item(double price, String name, int inStockCount, String description, byte[] image) {
         this.price = price;
         this.name = name;
         this.inStockCount = inStockCount;
         this.description = description;
+        this.image = image;
     }
 }
 

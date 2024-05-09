@@ -9,6 +9,8 @@ import com.example.eshoppokorny.repository.AppUserRepository;
 import com.example.eshoppokorny.repository.ItemRepository;
 import org.springframework.stereotype.Service;
 
+import java.util.Base64;
+import java.util.List;
 import java.util.Optional;
 @Service
 public class ItemServiceV1 implements ItemService{
@@ -16,6 +18,11 @@ public class ItemServiceV1 implements ItemService{
 
     public ItemServiceV1(ItemRepository repository) {
         this.repository = repository;
+    }
+
+    @Override
+    public List<Item> getAllItems() {
+        return repository.findAll();
     }
 
     @Override
@@ -27,9 +34,11 @@ public class ItemServiceV1 implements ItemService{
         return item.get();
     }
 
+
     @Override
     public Item createItem(InputItemDtoV1 inputItem) {
-        Item item = new Item(inputItem.getPrice(), inputItem.getName(), inputItem.getInStockCount(), inputItem.getDescription());
+        byte[] image = Base64.getDecoder().decode(inputItem.getImage());
+        Item item = new Item(inputItem.getPrice(), inputItem.getName(), inputItem.getInStockCount(), inputItem.getDescription(), image);
         return repository.save(item);
     }
 
