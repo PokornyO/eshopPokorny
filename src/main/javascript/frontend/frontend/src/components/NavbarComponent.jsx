@@ -3,13 +3,18 @@ import Toolbar from '@mui/material/Toolbar';
 import Typography from '@mui/material/Typography';
 import Button from '@mui/material/Button';
 import { Link as RouterLink } from 'react-router-dom';
-import useAuth from "../context/UseAuth.jsx";
+import {useAuth} from "../context/UseAuth.jsx";
+import Cookies from "js-cookie";
+import {useEffect} from "react";
+
 
 
 
 
 const Navbar = () => {
-    const { loggedIn, logout } = useAuth();
+    const { isAuthenticated, logout } = useAuth();
+
+
     return (
         <AppBar position="fixed">
             <Toolbar>
@@ -18,7 +23,7 @@ const Navbar = () => {
                 </Typography>
                 <Button color="inherit" component={RouterLink} to="/">Domů</Button>
                 <Button color="inherit" component={RouterLink} to="/products">Produkty</Button>
-                {loggedIn ? (
+                {isAuthenticated ? (
                     <Button color="inherit" onClick={logout}>Odhlásit</Button>
                 ) : (
                     <Button color="inherit" component={RouterLink} to="/login">Přihlásit se</Button>

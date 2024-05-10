@@ -9,6 +9,7 @@ import {jwtDecode} from "jwt-decode";
 import Cookies from "js-cookie";
 import {getLogin} from "../services/LoginService.jsx";
 import {useNavigate} from "react-router-dom";
+import {useAuth} from "../context/UseAuth.jsx";
 
 
 
@@ -20,7 +21,7 @@ const LoginComponent = () => {
     const [loading, setLoading] = useState(false); // Indikátor načítání
     const [error, setError] = useState(null); // Zpráva o chybě
     const navigate = useNavigate();
-
+    const { loggedIn, login } = useAuth();
     const handleLogin = async (e) => {
         e.preventDefault();
         setLoading(true);
@@ -31,13 +32,17 @@ const LoginComponent = () => {
             const token = response.data.token;
             if(token) {
                 const decodedToken = jwtDecode(token)
-                Cookies.set("authToken", token, {expires: 14})
-                navigate("/");
+                Cookies.set('authToken', token, { expires: 7 });
+                Cookies.set("userId", decodedToken.sub, {expires: 7});
+                Cookies.set("userRoles", JSON.stringify(decodedToken.au), {expires: 7});
+                navigate("/products");
             }
         } catch (err) {
             alert("Wrong username or password");
         } finally {
             setLoading(false);
+            setUsername('');
+            setPassword('');
         }
     };
 
