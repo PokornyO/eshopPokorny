@@ -4,12 +4,11 @@ import TextField from "@mui/material/TextField";
 import Button from "@mui/material/Button";
 import {fixPropTypesSort} from "eslint-plugin-react/lib/util/propTypesSort.js";
 import Cookies from "js-cookie";
+import {AxiosHeaders as Buffer} from "axios";
 
 const ProductComponent = (props) => {
     const { isAuthenticated, logout } = useAuth();
-    const imageUrl = props.image
-        ? `data:image/png;base64,${Buffer.from(props.image).toString("base64")}`
-        : null;
+    const imageUrl = `data:image/png;base64,${props.image}`;
     const isAdmin = () => {
         const roles = Cookies.get("userRoles");
         return roles != null && roles.includes("ROLE_ADMIN");
@@ -42,7 +41,7 @@ const ProductComponent = (props) => {
                 <div style={{ marginTop: '10px' }}>
                     {isAuthenticated && isAdmin && ( // Podmínka pro zobrazení tlačítek pouze pro admina
                         <div>
-                            <Button variant="outlined" color="primary" size="small" sx={styles.adminButton}>
+                            <Button variant="outlined" color="primary" size="small" sx={styles.adminButton} onClick={props.onEdit}>
                                 Upravit
                             </Button>
                         </div>

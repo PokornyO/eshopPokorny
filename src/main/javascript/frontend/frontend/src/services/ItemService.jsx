@@ -10,3 +10,18 @@ export const deleteProduct = (id) => axios.delete(REST_API_BASE_URL + `/${id}`, 
         Authorization: `Bearer ${Cookies.get('authToken')}`
     }
 });
+export const updateProduct = (id, product) => axios.put(REST_API_BASE_URL + `/${id}`, product, {
+    headers: {
+        Authorization: `Bearer ${Cookies.get('authToken')}`
+    }
+});
+export const getProduct = (id) => axios.get(REST_API_BASE_URL + `/${id}`, {
+    headers: {
+        Authorization: `Bearer ${Cookies.get('authToken')}`
+    }
+});
+export const addProduct = (product) => axios.post(REST_API_BASE_URL, product, {
+    headers: {
+        Authorization: `Bearer ${Cookies.get('authToken')}`
+    }
+});

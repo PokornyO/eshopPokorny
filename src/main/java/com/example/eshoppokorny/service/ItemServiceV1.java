@@ -37,7 +37,10 @@ public class ItemServiceV1 implements ItemService{
 
     @Override
     public Item createItem(InputItemDtoV1 inputItem) {
-        byte[] image = Base64.getDecoder().decode(inputItem.getImage());
+        byte[] image = null;
+        if(inputItem.getImage() != null) {
+            image = Base64.getDecoder().decode(inputItem.getImage());
+        }
         Item item = new Item(inputItem.getPrice(), inputItem.getName(), inputItem.getInStockCount(), inputItem.getDescription(), image);
         return repository.save(item);
     }
