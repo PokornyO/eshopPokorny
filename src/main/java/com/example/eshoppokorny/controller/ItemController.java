@@ -15,6 +15,7 @@ import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
@@ -42,7 +43,8 @@ public class ItemController {
     public ResponseEntity<ItemDtoV1> updateItem(@Valid @RequestBody InputItemDtoV1 inputItem, @PathVariable Long id) throws ItemException {
         return new ResponseEntity<>(ItemMapperV1.mapToItemDto(service.updateItem(inputItem,id)), HttpStatus.OK);
     }
-    @DeleteMapping("/id")
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteUser(@PathVariable Long id) throws ItemException {
         service.deleteItem(id);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);

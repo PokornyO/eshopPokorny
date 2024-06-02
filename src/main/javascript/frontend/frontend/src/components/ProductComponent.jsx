@@ -15,6 +15,7 @@ const ProductComponent = (props) => {
         return roles != null && roles.includes("ROLE_ADMIN");
     };
 
+
     return (
         <Card style={styles.card}>
             {imageUrl && (
@@ -48,7 +49,7 @@ const ProductComponent = (props) => {
                     )}
                     {isAuthenticated && isAdmin && (
                         <div>
-                            <Button variant="outlined" color="secondary" size="small" sx={styles.adminButton}>
+                            <Button variant="outlined" color="secondary" size="small" sx={styles.adminButton} onClick={props.onDelete}>
                                 Odebrat
                             </Button>
                         </div>
@@ -64,7 +65,7 @@ const ProductComponent = (props) => {
                             sx={{...styles.quantityInput, width: '80px'}}
                             size="small"
                         />
-                        <Button variant="contained" color="primary" size="small">
+                        <Button variant="contained" color="primary" size="small" onClick={props.onDelete}>
                             Přidat do košíku
                         </Button>
                     </div>

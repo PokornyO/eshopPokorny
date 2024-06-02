@@ -35,7 +35,7 @@ const LoginComponent = () => {
                 Cookies.set('authToken', token, { expires: 7 });
                 Cookies.set("userId", decodedToken.sub, {expires: 7});
                 Cookies.set("userRoles", JSON.stringify(decodedToken.au), {expires: 7});
-                navigate("/products");
+                navigate("/items");
             }
         } catch (err) {
             alert("Wrong username or password");
