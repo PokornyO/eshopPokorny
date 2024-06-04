@@ -24,7 +24,10 @@ const Navbar = () => {
                 <Button color="inherit" component={RouterLink} to="/">Domů</Button>
                 <Button color="inherit" component={RouterLink} to="/products">Produkty</Button>
                 {isAuthenticated ? (
-                    <Button color="inherit" onClick={logout}>Odhlásit</Button>
+                    <>
+                        <Button color="inherit" component={RouterLink} to="/cart">Košík</Button>
+                        <Button color="inherit" onClick={logout}>Odhlásit</Button>
+                    </>
                 ) : (
                     <Button color="inherit" component={RouterLink} to="/login">Přihlásit se</Button>
                 )}

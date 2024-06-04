@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import Cookies from 'js-cookie';
 import {useNavigate} from "react-router-dom";
 
-// Vytvoření vlastního hooku pro autentizaci
+
 export const useAuth = () => {
     const [isAuthenticated, setIsAuthenticated] = useState(false);
     const navigate = useNavigate();

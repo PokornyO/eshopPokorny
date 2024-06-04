@@ -48,7 +48,7 @@ const ItemsList = () => {
             <Grid container spacing={3}>
                 {items.map((product) => (
                     <Grid key={product.id}>
-                        <ProductComponent {...product}  onDelete={() => handleDelete(product.id)} onEdit={() => handleEditProduct(product.id)}/>
+                        <ProductComponent {...product}  onDelete={() => handleDelete(product.id)} onEdit={() => handleEditProduct(product.id)} cart={false}/>
                     </Grid>
                 ))}
             </Grid>
