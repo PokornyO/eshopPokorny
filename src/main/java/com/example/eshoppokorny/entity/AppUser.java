@@ -15,7 +15,7 @@ import java.util.List;
     public class AppUser {
         @Id
         @GeneratedValue(strategy = GenerationType.IDENTITY)
-        private long id;
+        private Long id;
 
         private String username;
         private String password;
@@ -29,7 +29,7 @@ import java.util.List;
         private List<Role> roles = new ArrayList<>();
         @ManyToOne
         private Address address;
-        @OneToMany(mappedBy = "appUser")
+        @OneToMany(mappedBy = "appUser", fetch = FetchType.EAGER)
         private List<EOrder> eOrders = new ArrayList<>();
         public AppUser(String username, String password, boolean active, Date creation_date, Date update_date) {
             this.username = username;

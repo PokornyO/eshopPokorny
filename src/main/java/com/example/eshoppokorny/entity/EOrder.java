@@ -6,7 +6,9 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 import java.util.Set;
 
 @Data
@@ -27,7 +29,7 @@ public class EOrder {
     @JoinColumn(name = "address_id")
     @JsonIgnore
     private Address address;
-    @OneToMany(mappedBy = "order")
+    @OneToMany(mappedBy = "order", fetch = FetchType.EAGER)
     @JsonIgnore
-    private Set<EOrderItem> orderItems;
+    private List<EOrderItem> orderItems = new ArrayList<>();
 }

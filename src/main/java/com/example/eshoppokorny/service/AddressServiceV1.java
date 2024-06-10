@@ -2,14 +2,11 @@ package com.example.eshoppokorny.service;
 
 import com.example.eshoppokorny.dto.InputAddressDtoV1;
 import com.example.eshoppokorny.entity.Address;
-import com.example.eshoppokorny.entity.Item;
 import com.example.eshoppokorny.exceptions.AddressException;
-import com.example.eshoppokorny.exceptions.ItemException;
 import com.example.eshoppokorny.repository.AddressRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import java.util.Base64;
 import java.util.List;
 import java.util.Optional;
 
@@ -38,7 +35,7 @@ public class AddressServiceV1 implements AddressService{
 
     @Override
     public Address creatAddress(InputAddressDtoV1 inputAddress) {
-        Address address = new Address(inputAddress.getCity(), inputAddress.getStreet(), inputAddress.getNumber(), inputAddress.getPostalCode());
+        Address address = new Address(inputAddress.getCity(), inputAddress.getStreet(), inputAddress.getHouseNumber(), inputAddress.getZipcode());
         return repository.save(address);
     }
 
@@ -47,8 +44,8 @@ public class AddressServiceV1 implements AddressService{
         Address address = findAddressById(id);
         address.setCity(inputAddress.getCity());
         address.setStreet(inputAddress.getStreet());
-        address.setNumber(inputAddress.getNumber());
-        address.setPostalCode(inputAddress.getPostalCode());
+        address.setHouseNumber(inputAddress.getHouseNumber());
+        address.setZipcode(inputAddress.getZipcode());
         return repository.save(address);
     }
 
@@ -57,14 +54,14 @@ public class AddressServiceV1 implements AddressService{
         List<Address> existingAddresses = repository.findByAllAttributesExceptId(
                 inputAddress.getCity(),
                 inputAddress.getStreet(),
-                inputAddress.getNumber(),
-                inputAddress.getPostalCode());
+                inputAddress.getHouseNumber(),
+                inputAddress.getZipcode());
         return !existingAddresses.isEmpty();
     }
 
     @Override
     public List<Address> findByAllAttributes(InputAddressDtoV1 inputAddress) {
-        return repository.findByAllAttributesExceptId(inputAddress.getCity(), inputAddress.getStreet(), inputAddress.getNumber(), inputAddress.getPostalCode());
+        return repository.findByAllAttributesExceptId(inputAddress.getCity(), inputAddress.getStreet(), inputAddress.getHouseNumber(), inputAddress.getZipcode());
     }
 
     @Override

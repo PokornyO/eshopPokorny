@@ -13,6 +13,7 @@ import com.example.eshoppokorny.exceptions.EOrderException;
 import com.example.eshoppokorny.exceptions.ItemException;
 import com.example.eshoppokorny.repository.EOrderItemRepository;
 import com.example.eshoppokorny.repository.EOrderRepository;
+import com.example.eshoppokorny.repository.ItemRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -30,6 +31,7 @@ public class EOrderServiceV1 implements EOrderService{
     private final AppUserService appUserService;
     private final AddressService addressService;
     private final ItemService itemService;
+    private final ItemRepository itemRepository;
 
     @Override
     public List<EOrder> getAllOrders() {
@@ -56,14 +58,24 @@ public class EOrderServiceV1 implements EOrderService{
         for(ItemCount itemCount : inputEOrderDtoV1.getProductInfo()) {
             EOrderItem eOrderItem = new EOrderItem();
             Item item = itemService.findItemById(itemCount.getItemId());
+            if(item.getInStockCount() < itemCount.getCount()) {
+                System.out.println(item.getInStockCount());
+                System.out.println(itemCount.getCount());
+                throw new ItemException("More items than in stock");
+            } else {
+                item.setInStockCount(item.getInStockCount()- itemCount.getCount());
+                itemRepository.save(item);
+            }
             price += item.getPrice()*itemCount.getCount();
             eOrderItem.setItem(item);
             eOrderItem.setCount(itemCount.getCount());
             eOrderItem.setOrder(eOrder);
+            eOrderItems.add(eOrderItem);
         }
         eOrder.setPrice(price);
+        repository.save(eOrder);
         eOrderItemRepository.saveAll(eOrderItems);
-        return repository.save(eOrder);
+        return eOrder;
     }
 
     @Override

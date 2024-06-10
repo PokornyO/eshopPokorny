@@ -2,7 +2,9 @@ import React, { useState, useEffect } from 'react';
 import { TextField, Button, Grid, Typography } from "@mui/material";
 import Cookies from "js-cookie";
 import {getAppUser} from "../services/AppUserService.jsx";
-import {getAddress} from "../services/AddressService.jsx";
+import {addAddress, getAddress} from "../services/AddressService.jsx";
+import {createOrder} from "../services/EOrderService.jsx";
+import {useNavigate} from "react-router-dom";
 
 const OrderFormComponent = ({ onSubmit }) => {
     const [userinfo, setUserinfo] = useState({
@@ -11,7 +13,8 @@ const OrderFormComponent = ({ onSubmit }) => {
         houseNumber: '',
         zipcode: ''
     });
-
+    const [errors, setErrors] = useState({});
+    const navigate = useNavigate();
     useEffect(() => {
         const fetchUser = async () => {
             try {
@@ -41,10 +44,48 @@ const OrderFormComponent = ({ onSubmit }) => {
 
         fetchUser();
     }, []);
-
-    const handleSubmit = (event) => {
+    const validate = () => {
+        let tempErrors = {};
+        tempErrors.city = userinfo.city ? "" : "City is required.";
+        tempErrors.street = userinfo.street ? "" : "Street is required.";
+        tempErrors.houseNumber = userinfo.houseNumber && userinfo.houseNumber > 0 ? "" : "House number must be a positive number.";
+        tempErrors.zipcode = userinfo.zipcode && userinfo.zipcode > 0 ? "" : "Zipcode must be a positive number.";
+        setErrors(tempErrors);
+        return Object.values(tempErrors).every(x => x === "");
+    };
+    const handleSubmit = async (event) => {
         event.preventDefault();
-        onSubmit(userinfo);
+        if (validate()) {
+            try {
+                // Create address object
+                const address = {
+                    city: userinfo.city,
+                    street: userinfo.street,
+                    houseNumber: userinfo.houseNumber,
+                    zipcode: userinfo.zipcode
+                };
+
+
+                const addressResponse = await addAddress(address);
+                const cart = JSON.parse(localStorage.getItem('cart')) || [];
+                const productInfo = cart.map(item => ({
+                    itemId: item.id,
+                    count: item.quantity
+                }));
+                const orderData = {
+                    userId: Cookies.get('userId'),
+                    addressId: addressResponse.data.id,
+                    productInfo: productInfo
+                };
+
+                const response = await createOrder(orderData)
+                const id = response.data.id
+                navigate(`/order-details/${id}`);
+            } catch (error) {
+                console.error('Error submitting order:', error);
+            }
+        }
+
     };
 
     const handleChange = (e) => {

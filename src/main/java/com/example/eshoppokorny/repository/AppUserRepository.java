@@ -12,6 +12,7 @@ import java.util.Optional;
 public interface AppUserRepository extends JpaRepository<AppUser, Long> {
     List<AppUser> findAppUserByActive(Boolean active);
     Optional<AppUser> findAppUsersByUsername(String username);
+    AppUser findByUsername(String username);
     @Query("SELECT u FROM AppUser u JOIN u.roles r WHERE r.name = :role")
     List<AppUser> findAppUsersByRoleName(String role);
 }

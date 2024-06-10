@@ -5,7 +5,11 @@ import com.example.eshoppokorny.entity.AppUser;
 
 public class AppUserMapperV1 {
     public static AppUserDtoV1 mapAppUserToAppUserDto(AppUser user) {
-        return new AppUserDtoV1(user.getId(), user.getUsername(), user.getEmail(), user.isActive(), user.getCreation_date(), user.getUpdate_date(), user.getAddress().getId());
+        Long id = null;
+        if(user.getAddress() != null) {
+            id = user.getAddress().getId();
+        }
+        return new AppUserDtoV1(user.getId(), user.getUsername(), user.getEmail(), user.isActive(), user.getCreation_date(), user.getUpdate_date(), id);
     }
 
 }

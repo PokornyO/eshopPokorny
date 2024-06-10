@@ -1,56 +1,45 @@
 import React from 'react';
-import { useTable, useSortBy } from 'react-table';
+import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, Typography } from '@mui/material';
 
-// Základní opakovaně použitelná komponenta tabulky
-const ReusableTable = ({ columns, data }) => {
-    // Použijeme hook useTable k vytvoření základní tabulky
-    const {
-        getTableProps,
-        getTableBodyProps,
-        headerGroups,
-        rows,
-        prepareRow,
-    } = useTable(
-        {
-            columns, // Definice sloupců
-            data,    // Data, která budou zobrazena
-        },
-        useSortBy // Přidává možnost třídění
-    );
-
+const TableComponent = ({ columns, data, title }) => {
     return (
-        <table {...getTableProps()} style={styles.table}>
-            <thead>
-            {headerGroups.map(headerGroup => (
-                <tr {...headerGroup.getHeaderGroupProps()}>
-                    {headerGroup.headers.map(column => (
-                        <th
-                            {...column.getHeaderProps(column.getSortByToggleProps())}
-                            style={styles.header}
-                        >
-                            {column.render('Header')}
-                            {/* Zobrazí směr třídění, pokud je aktivní */}
-                            {column.isSorted ? (column.isSortedDesc ? ' ▼' : ' ▲') : ''}
-                        </th>
-                    ))}
-                </tr>
-            ))}
-            </thead>
-            <tbody {...getTableBodyProps()}>
-            {rows.map(row => {
-                prepareRow(row); // Připraví řádky k vykreslení
-                return (
-                    <tr {...row.getRowProps()}>
-                        {row.cells.map(cell => (
-                            <td {...cell.getCellProps()} style={styles.cell}>
-                                {cell.render('Cell')}
-                            </td>
+        <Paper sx={{ width: '100%', overflow: 'hidden', mt: 3 }}>
+            <Typography variant="h6" component="div" sx={{ padding: 2 }}>
+                {title}
+            </Typography>
+            <TableContainer sx={{ maxHeight: 440 }}>
+                <Table stickyHeader aria-label="sticky table">
+                    <TableHead>
+                        <TableRow>
+                            {columns.map((column) => (
+                                <TableCell
+                                    key={column.field}
+                                    align={column.align || 'left'}
+                                    style={{ minWidth: column.minWidth || 100 }}
+                                >
+                                    {column.headerName}
+                                </TableCell>
+                            ))}
+                        </TableRow>
+                    </TableHead>
+                    <TableBody>
+                        {data.map((row, rowIndex) => (
+                            <TableRow hover role="checkbox" tabIndex={-1} key={rowIndex}>
+                                {columns.map((column) => {
+                                    const value = row[column.field];
+                                    return (
+                                        <TableCell key={column.field} align={column.align || 'left'}>
+                                            {value}
+                                        </TableCell>
+                                    );
+                                })}
+                            </TableRow>
                         ))}
-                    </tr>
-                );
-            })}
-            </tbody>
-        </table>
+                    </TableBody>
+                </Table>
+            </TableContainer>
+        </Paper>
     );
 };
-export default ReusableTable;
+
+export default TableComponent;

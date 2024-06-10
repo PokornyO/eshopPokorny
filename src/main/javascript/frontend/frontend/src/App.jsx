@@ -10,6 +10,7 @@ import ProductFormComponent from "./components/ProductFormComponent.jsx";
 import CartComponent from "./components/CartComponent.jsx";
 import {Toaster} from 'react-hot-toast';
 import OrderFormComponent from "./components/OrderFormComponent.jsx";
+import OrderDetailsComponent from "./components/OrderDetailsComponent.jsx";
 
 const App = () => {
     return (
@@ -24,6 +25,7 @@ const App = () => {
                     <Route path="/edit-product/:id" element={<ProductFormComponent />} />
                     <Route path="/newOrder" element={<OrderFormComponent />} />
                     <Route path="/login" element={<LoginComponent />} />
+                    <Route path="/order-details/:id" element={<OrderDetailsComponent/>} />
                 </Routes>
             </BrowserRouter>
     );

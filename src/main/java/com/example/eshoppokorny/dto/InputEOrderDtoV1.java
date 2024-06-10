@@ -8,5 +8,4 @@ public class InputEOrderDtoV1 {
     private Long userId;
     private Long addressId;
     private List<ItemCount> productInfo;
-    private double totalPrice;
 }

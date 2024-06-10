@@ -8,6 +8,6 @@ import lombok.Data;
 public class InputAddressDtoV1 {
     private String city;
     private String street;
-    private int number;
-    private int postalCode;
+    private int houseNumber;
+    private int zipcode;
 }

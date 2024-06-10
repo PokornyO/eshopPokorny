@@ -8,8 +8,6 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.util.Date;
-
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
@@ -21,13 +19,13 @@ public class Address {
 
     private String city;
     private String street;
-    private int number;
-    private int postalCode;
+    private int houseNumber;
+    private int zipcode;
 
     public Address(String city, String street, int number, int postalCode) {
         this.city = city;
         this.street = street;
-        this.number = number;
-        this.postalCode = postalCode;
+        this.houseNumber = number;
+        this.zipcode = postalCode;
     }
 }
