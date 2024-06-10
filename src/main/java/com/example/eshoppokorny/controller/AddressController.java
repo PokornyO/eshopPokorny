@@ -5,12 +5,15 @@ import com.example.eshoppokorny.dto.InputAddressDtoV1;
 import com.example.eshoppokorny.dto.InputItemDtoV1;
 import com.example.eshoppokorny.dto.ItemDtoV1;
 import com.example.eshoppokorny.entity.Address;
+import com.example.eshoppokorny.entity.AppUser;
 import com.example.eshoppokorny.entity.Item;
 import com.example.eshoppokorny.exceptions.AddressException;
+import com.example.eshoppokorny.exceptions.AppUserException;
 import com.example.eshoppokorny.exceptions.ItemException;
 import com.example.eshoppokorny.mapper.AddressMapperV1;
 import com.example.eshoppokorny.mapper.ItemMapperV1;
 import com.example.eshoppokorny.service.AddressService;
+import com.example.eshoppokorny.service.AppUserServiceV1;
 import com.example.eshoppokorny.service.ItemService;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
@@ -26,35 +29,45 @@ import java.util.List;
 @RequestMapping("/address")
 @AllArgsConstructor
 public class AddressController {
-    private AddressService service;
+    private AddressService addressService;
+    private AppUserServiceV1 userService;
     @GetMapping()
     public ResponseEntity<List<AddressDtoV1>> getAddresses() {
-        List<Address> addresses = service.getAllAddresses();
+        List<Address> addresses = addressService.getAllAddresses();
         List<AddressDtoV1> addressDtoV1s = new ArrayList<>();
         for(Address address: addresses) {
             addressDtoV1s.add(AddressMapperV1.mapAddressToAddressDtoV1((address)));
         }
         return ResponseEntity.ok(addressDtoV1s);
     }
+    @PostMapping("/user/{id}")
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    public ResponseEntity<AddressDtoV1> createAddressUser(@Valid @RequestBody InputAddressDtoV1 inputAddressDtoV1, @PathVariable Long id) throws AppUserException {
+        Address address;
+        if(addressService.exists(inputAddressDtoV1)) {
+            address = addressService.findByAllAttributes(inputAddressDtoV1).get(0);
+        } else {
+            address = addressService.creatAddress(inputAddressDtoV1);
+        }
+        AppUser appUser= userService.findUserById(id);
+        appUser.setAddress(address);
+        return new ResponseEntity<>(AddressMapperV1.mapAddressToAddressDtoV1(address), HttpStatus.CREATED);
+    }
     @PostMapping()
     @PreAuthorize("hasRole('ROLE_ADMIN')")
-    public ResponseEntity<AddressDtoV1> createAddress(@Valid @RequestBody InputAddressDtoV1 inputAddressDtoV1) {
-        return new ResponseEntity<>(AddressMapperV1.mapAddressToAddressDtoV1(service.creatAddress(inputAddressDtoV1)), HttpStatus.CREATED);
+    public ResponseEntity<AddressDtoV1> createAddressOrder(@Valid @RequestBody InputAddressDtoV1 inputAddressDtoV1) throws AppUserException {
+        Address address;
+        if(addressService.exists(inputAddressDtoV1)) {
+            address = addressService.findByAllAttributes(inputAddressDtoV1).get(0);
+        } else {
+            address = addressService.creatAddress(inputAddressDtoV1);
+        }
+        return new ResponseEntity<>(AddressMapperV1.mapAddressToAddressDtoV1(address), HttpStatus.CREATED);
     }
     @GetMapping("/{id}")
     @PreAuthorize("hasAnyRole('ROLE_ADMIN','ROLE_USER')")
-    public ResponseEntity<AddressDtoV1> getUserById(@PathVariable Long id) throws AddressException {
-        return ResponseEntity.ok(AddressMapperV1.mapAddressToAddressDtoV1(service.findAddressById(id)));
+    public ResponseEntity<AddressDtoV1> getAddressById(@PathVariable Long id) throws AddressException {
+        return ResponseEntity.ok(AddressMapperV1.mapAddressToAddressDtoV1(addressService.findAddressById(id)));
     }
-    @PutMapping("/{id}")
-    @PreAuthorize("hasRole('ROLE_ADMIN')")
-    public ResponseEntity<AddressDtoV1> updateItem(@Valid @RequestBody InputAddressDtoV1 inputAddressDtoV1, @PathVariable Long id) throws AddressException {
-        return new ResponseEntity<>(AddressMapperV1.mapAddressToAddressDtoV1(service.updateAddress(inputAddressDtoV1,id)), HttpStatus.OK);
-    }
-    @PreAuthorize("hasRole('ROLE_ADMIN')")
-    @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteUser(@PathVariable Long id) throws AddressException {
-        service.deleteAddress(id);
-        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
-    }
+
 }

@@ -45,7 +45,7 @@ public class AppUserController {
         return service.findUsersByRole(role);
     }
     @GetMapping("/app-user/{id}")
-    @PreAuthorize("hasRole('ROLE_USER')")
+    @PreAuthorize("hasAnyRole('ROLE_ADMIN','ROLE_USER')")
     public ResponseEntity<AppUserDtoV1> getUserById(@PathVariable Long id) throws AppUserException {
         return ResponseEntity.ok(AppUserMapperV1.mapAppUserToAppUserDto(service.findUserById(id)));
     }

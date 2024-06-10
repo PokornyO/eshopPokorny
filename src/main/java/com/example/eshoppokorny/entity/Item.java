@@ -22,7 +22,7 @@ public class Item {
     private String description;
     @Lob
     private byte[] image;
-    @OneToMany(mappedBy = "id")
+    @OneToMany(mappedBy = "item")
     private Set<EOrderItem> orderItems;
     public Item(double price, String name, int inStockCount, String description, byte[] image) {
         this.price = price;

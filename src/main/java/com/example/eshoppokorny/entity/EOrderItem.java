@@ -13,8 +13,10 @@ public class EOrderItem {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
     @ManyToOne
+    @JoinColumn(name = "order_id")
     private EOrder order;
     @ManyToOne
+    @JoinColumn(name = "item_id")
     private Item item;
     private int count;
 }

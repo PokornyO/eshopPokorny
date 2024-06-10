@@ -1,5 +1,6 @@
 package com.example.eshoppokorny.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -17,8 +18,16 @@ public class EOrder {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
     private Date creationDate;
-    private Date expirationDate;
     private double price;
-    @OneToMany(mappedBy = "id")
+    @JsonIgnore
+    @ManyToOne
+    @JoinColumn(name = "appUser_id")
+    private AppUser appUser;
+    @ManyToOne
+    @JoinColumn(name = "address_id")
+    @JsonIgnore
+    private Address address;
+    @OneToMany(mappedBy = "order")
+    @JsonIgnore
     private Set<EOrderItem> orderItems;
 }

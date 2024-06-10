@@ -14,4 +14,5 @@ public class AppUserDtoV1 {
     private boolean active;
     private Date creation_date;
     private Date update_date;
+    private Long address_id;
 }

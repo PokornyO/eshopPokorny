@@ -32,6 +32,11 @@ public class AddressServiceV1 implements AddressService{
     }
 
     @Override
+    public Address findAddressByAppUserId(Long id) throws AddressException {
+        return null;
+    }
+
+    @Override
     public Address creatAddress(InputAddressDtoV1 inputAddress) {
         Address address = new Address(inputAddress.getCity(), inputAddress.getStreet(), inputAddress.getNumber(), inputAddress.getPostalCode());
         return repository.save(address);
@@ -45,6 +50,21 @@ public class AddressServiceV1 implements AddressService{
         address.setNumber(inputAddress.getNumber());
         address.setPostalCode(inputAddress.getPostalCode());
         return repository.save(address);
+    }
+
+    @Override
+    public boolean exists(InputAddressDtoV1 inputAddress) {
+        List<Address> existingAddresses = repository.findByAllAttributesExceptId(
+                inputAddress.getCity(),
+                inputAddress.getStreet(),
+                inputAddress.getNumber(),
+                inputAddress.getPostalCode());
+        return !existingAddresses.isEmpty();
+    }
+
+    @Override
+    public List<Address> findByAllAttributes(InputAddressDtoV1 inputAddress) {
+        return repository.findByAllAttributesExceptId(inputAddress.getCity(), inputAddress.getStreet(), inputAddress.getNumber(), inputAddress.getPostalCode());
     }
 
     @Override

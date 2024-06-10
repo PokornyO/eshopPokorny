@@ -27,7 +27,10 @@ import java.util.List;
         @ManyToMany()
         @JoinTable(name = "app_user_roles", inverseJoinColumns = @JoinColumn(name = "role_id"), joinColumns = @JoinColumn(name = "app_user_id"))
         private List<Role> roles = new ArrayList<>();
-
+        @ManyToOne
+        private Address address;
+        @OneToMany(mappedBy = "appUser")
+        private List<EOrder> eOrders = new ArrayList<>();
         public AppUser(String username, String password, boolean active, Date creation_date, Date update_date) {
             this.username = username;
             this.password = password;

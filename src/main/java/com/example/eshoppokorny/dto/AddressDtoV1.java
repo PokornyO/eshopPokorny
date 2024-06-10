@@ -9,6 +9,6 @@ public class AddressDtoV1 {
     private long id;
     private String city;
     private String street;
-    private int number;
-    private int postalCode;
+    private int houseNumber;
+    private int zipcode;
 }

@@ -12,7 +12,10 @@ import java.util.List;
 public interface AddressService {
     List<Address> getAllAddresses();
     Address findAddressById(Long id) throws AddressException;
+    Address findAddressByAppUserId(Long id) throws AddressException;
     Address creatAddress(InputAddressDtoV1 inputAddress);
     Address updateAddress(InputAddressDtoV1 inputAddress, Long id) throws AddressException;
+    boolean exists(InputAddressDtoV1 inputAddress);
+    List<Address> findByAllAttributes(InputAddressDtoV1 inputAddress);
     void deleteAddress(Long id) throws AddressException;
 }
