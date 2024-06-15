@@ -34,7 +34,7 @@ const ProductForm = () => {
         const file = event.target.files[0];
         const reader = new FileReader();
         reader.onloadend = () => {
-            const base64Image = reader.result.split(",")[1]; // Odebereme "data:image/*;base64," část
+            const base64Image = reader.result.split(",")[1];
             setProduct({ ...product, image: base64Image });
         };
         reader.readAsDataURL(file);

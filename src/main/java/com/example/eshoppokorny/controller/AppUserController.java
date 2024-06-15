@@ -64,4 +64,15 @@ public class AppUserController {
         service.deleteAppUser(id);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
+    @GetMapping("/email")
+    public ResponseEntity<Boolean> isEmailUnique(@RequestParam String email) {
+        boolean isUnique = service.isEmailUnique(email);
+        return ResponseEntity.ok(isUnique);
+    }
+
+    @GetMapping("/username")
+    public ResponseEntity<Boolean> isUsernameUnique(@RequestParam String username) {
+        boolean isUnique = service.isUserUnique(username);
+        return ResponseEntity.ok(isUnique);
+    }
 }

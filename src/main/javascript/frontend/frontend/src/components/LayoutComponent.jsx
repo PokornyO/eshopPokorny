@@ -6,8 +6,8 @@ import Box from '@mui/material/Box';
 const LayoutComponent = ({ children }) => {
     return (
         <Box>
-            <Navbar /> {/* Navbar nahoře */}
-            <Container style={styles.content}> {/* Container pro obsah */}
+            <Navbar />
+            <Container style={styles.content}>
                 {children}
             </Container>
         </Box>
@@ -16,8 +16,8 @@ const LayoutComponent = ({ children }) => {
 
 const styles = {
     content: {
-        padding: '20px', // Vloží trochu prostoru kolem obsahu
-        marginTop: '10px', // Oddělí obsah od navbaru
+        padding: '20px',
+        marginTop: '10px',
     },
 };
 

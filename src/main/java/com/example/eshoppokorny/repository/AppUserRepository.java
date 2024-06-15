@@ -13,6 +13,7 @@ public interface AppUserRepository extends JpaRepository<AppUser, Long> {
     List<AppUser> findAppUserByActive(Boolean active);
     Optional<AppUser> findAppUsersByUsername(String username);
     AppUser findByUsername(String username);
+    AppUser findAppUserByEmail(String email);
     @Query("SELECT u FROM AppUser u JOIN u.roles r WHERE r.name = :role")
     List<AppUser> findAppUsersByRoleName(String role);
 }

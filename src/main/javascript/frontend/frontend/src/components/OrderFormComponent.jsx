@@ -57,7 +57,6 @@ const OrderFormComponent = ({ onSubmit }) => {
         event.preventDefault();
         if (validate()) {
             try {
-                // Create address object
                 const address = {
                     city: userinfo.city,
                     street: userinfo.street,

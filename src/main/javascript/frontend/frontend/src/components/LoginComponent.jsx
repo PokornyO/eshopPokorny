@@ -18,15 +18,16 @@ import {useAuth} from "../context/UseAuth.jsx";
 const LoginComponent = () => {
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
-    const [loading, setLoading] = useState(false); // Indikátor načítání
-    const [error, setError] = useState(null); // Zpráva o chybě
-    const navigate = useNavigate();
+    const [loading, setLoading] = useState(false);
+    const [error, setError] = useState(null);
     const { loggedIn, login } = useAuth();
+    const navigate = useNavigate();
     const handleLogin = async (e) => {
         e.preventDefault();
         setLoading(true);
         setError(null);
         try {
+            setPassword(await bcrypt.hash(password, 10))
             const loginRequest = {username, password};
             const response = await getLogin(loginRequest)
             const token = response.data.token;
@@ -45,6 +46,9 @@ const LoginComponent = () => {
             setPassword('');
         }
     };
+    const handleRegisterRedirect = () => {
+        navigate('/register');
+    };
 
     return (
         <Box
@@ -52,7 +56,7 @@ const LoginComponent = () => {
                 display: 'flex',
                 justifyContent: 'center',
                 alignItems: 'center',
-                height: '100vh', // Centrování
+                height: '100vh',
             }}
         >
             <Paper
@@ -99,6 +103,21 @@ const LoginComponent = () => {
                         {error}
                     </Typography>
                 )}
+                <Typography variant="body1" sx={{ mt: 2, mb: 1 }}>
+                    Ještě nemáte účet?
+                </Typography>
+                <Button
+                    variant="outlined"
+                    color="secondary"
+                    fullWidth
+                    onClick={handleRegisterRedirect}
+                    sx={{
+                        fontWeight: 'bold',
+                        padding: '10px 0'
+                    }}
+                >
+                    Registrovat
+                </Button>
             </Paper>
         </Box>
     );

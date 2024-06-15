@@ -41,6 +41,8 @@ public class AuthServiceV1 implements AuthService {
     public boolean hasId(Long id){
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         UserPrincipal principal = (UserPrincipal) authentication.getPrincipal();
-        return principal.getUserId().equals(id);
+        String username = principal.getUsername();
+        AppUser user = appUserRepository.findByUsername(username);
+        return user.getId().equals(id);
     }
 }

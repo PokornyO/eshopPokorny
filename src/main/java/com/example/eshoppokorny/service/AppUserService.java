@@ -16,4 +16,6 @@ public interface AppUserService {
     AppUser createAppUse(InputAppUserDtoV1 inputUser);
     AppUser updateAppUser(InputAppUserDtoV1 appUser, Long id) throws AppUserException;
     void deleteAppUser(Long id) throws AppUserException;
+    boolean isUserUnique(String username);
+    boolean isEmailUnique(String email);
 }

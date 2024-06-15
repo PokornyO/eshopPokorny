@@ -7,12 +7,12 @@ import {useNavigate} from "react-router-dom";
 
 const CartComponent = () => {
     const [cartItems, setCartItems] = useState([]);
-    const [totalPrice, setTotalPrice] = useState(0); // Stavová proměnná pro celkovou cenu
+    const [totalPrice, setTotalPrice] = useState(0);
 
     useEffect(() => {
         const storedCartItems = JSON.parse(localStorage.getItem('cart')) || [];
         setCartItems(storedCartItems);
-        calculateTotalPrice(storedCartItems); // Při načítání komponenty spočítáme celkovou cenu
+        calculateTotalPrice(storedCartItems);
     }, []);
 
     const calculateTotalPrice = (items) => {
@@ -24,7 +24,7 @@ const CartComponent = () => {
         const updatedCartItems = cartItems.filter(item => item.id !== id);
         setCartItems(updatedCartItems);
         localStorage.setItem('cart', JSON.stringify(updatedCartItems));
-        calculateTotalPrice(updatedCartItems); // Po odebrání položky spočítáme novou celkovou cenu
+        calculateTotalPrice(updatedCartItems);
     };
 
     const handleChangeQuantity = (id, newQuantity) => {
@@ -35,14 +35,20 @@ const CartComponent = () => {
                         duration: 3000,
                     });
                 }
-                const updatedQuantity = isNaN(newQuantity) ? item.quantity : Math.min(Number(newQuantity), Number(item.stock));
+                let updatedQuantity = isNaN(newQuantity) ? item.quantity : Math.min(Number(newQuantity), Number(item.stock));
+                if(updatedQuantity < 1) {
+                    updatedQuantity = 1
+                    toast.error(`Minimální počet kusů v košíku je 1`, {
+                        duration: 3000,
+                    });
+                }
                 return { ...item, quantity: updatedQuantity };
             }
             return item;
         });
         setCartItems(updatedCartItems);
         localStorage.setItem('cart', JSON.stringify(updatedCartItems));
-        calculateTotalPrice(updatedCartItems); // Po změně množství spočítáme novou celkovou cenu
+        calculateTotalPrice(updatedCartItems);
     };
 
     const handleOrder = () => {
@@ -62,8 +68,8 @@ const CartComponent = () => {
                             </Grid>
                         ))}
                     </Grid>
-                    <Typography variant="h6">Celková cena: {totalPrice} Kč</Typography> {/* Zobrazíme celkovou cenu */}
-                    <Button variant="contained" color="primary" onClick={handleOrder}>Objednat</Button> {/* Tlačítko pro objednání */}
+                    <Typography variant="h6">Celková cena: {totalPrice} Kč</Typography>
+                    <Button variant="contained" color="primary" onClick={handleOrder}>Objednat</Button>
                 </>
             )}
         </div>

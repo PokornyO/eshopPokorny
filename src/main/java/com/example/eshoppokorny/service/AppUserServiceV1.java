@@ -67,4 +67,15 @@ public class AppUserServiceV1 implements AppUserService {
     public void deleteAppUser(Long id) throws AppUserException {
         repository.delete(findUserById(id));
     }
+
+    @Override
+    public boolean isUserUnique(String username) {
+        return repository.findByUsername(username) == null;
+    }
+
+    @Override
+    public boolean isEmailUnique(String email) {
+        return repository.findAppUserByEmail(email) == null;
+    }
+
 }
