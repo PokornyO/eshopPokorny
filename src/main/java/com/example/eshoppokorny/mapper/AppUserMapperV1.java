@@ -2,6 +2,7 @@ package com.example.eshoppokorny.mapper;
 
 import com.example.eshoppokorny.dto.AppUserDtoV1;
 import com.example.eshoppokorny.entity.AppUser;
+import com.example.eshoppokorny.entity.Role;
 
 public class AppUserMapperV1 {
     public static AppUserDtoV1 mapAppUserToAppUserDto(AppUser user) {
@@ -9,7 +10,11 @@ public class AppUserMapperV1 {
         if(user.getAddress() != null) {
             id = user.getAddress().getId();
         }
-        return new AppUserDtoV1(user.getId(), user.getUsername(), user.getEmail(), user.isActive(), user.getCreation_date(), user.getUpdate_date(), id, user.getRoles().get(0));
+        Role role = null;
+        if(!user.getRoles().isEmpty()) {
+            role = user.getRoles().get(0);
+        }
+        return new AppUserDtoV1(user.getId(), user.getUsername(), user.getEmail(), user.isActive(), user.getCreation_date(), user.getUpdate_date(), id, role);
     }
 
 }

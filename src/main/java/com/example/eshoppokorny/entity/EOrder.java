@@ -22,10 +22,10 @@ public class EOrder {
     private Date creationDate;
     private double price;
     @JsonIgnore
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "appUser_id")
     private AppUser appUser;
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "address_id")
     @JsonIgnore
     private Address address;

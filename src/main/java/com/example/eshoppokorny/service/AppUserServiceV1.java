@@ -8,6 +8,7 @@ import com.example.eshoppokorny.exceptions.RoleException;
 import com.example.eshoppokorny.repository.AppUserRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Date;
 import java.util.List;
@@ -34,7 +35,7 @@ public class AppUserServiceV1 implements AppUserService {
     public List<AppUser> getAllAppUsers() {
         return repository.findAll();
     }
-
+    @Transactional
     @Override
     public AppUser findUserById(Long id) throws AppUserException {
         Optional<AppUser> appUser = repository.findById(id);
@@ -43,12 +44,12 @@ public class AppUserServiceV1 implements AppUserService {
         }
         return appUser.get();
     }
-
+    @Transactional
     @Override
     public Optional<AppUser> findUserByUsername(String username) {
         return repository.findAppUsersByUsername(username);
     }
-
+    @Transactional
     @Override
     public AppUser createAppUse(InputAppUserDtoV1 inputUser) throws RoleException {
         AppUser user = new AppUser(inputUser.getUsername(), inputUser.getPassword(), inputUser.isActive(), new Date(), new Date());
@@ -57,12 +58,12 @@ public class AppUserServiceV1 implements AppUserService {
         user.getRoles().add(role);
         return repository.save(user);
     }
-
+    @Transactional
     @Override
     public AppUser updateAppUser(AppUser appUser) {
         return repository.save(appUser);
     }
-
+    @Transactional
     @Override
     public AppUser updateAppUser(InputAppUserDtoV1 appUser, Long id) throws AppUserException, RoleException {
         AppUser user = findUserById(id);
@@ -75,7 +76,7 @@ public class AppUserServiceV1 implements AppUserService {
         user.getRoles().add(role);
         return repository.save(user);
     }
-
+    @Transactional
     @Override
     public void deleteAppUser(Long id) throws AppUserException {
         repository.delete(findUserById(id));

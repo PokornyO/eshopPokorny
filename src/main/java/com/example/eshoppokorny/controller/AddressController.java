@@ -55,7 +55,7 @@ public class AddressController {
         return new ResponseEntity<>(AddressMapperV1.mapAddressToAddressDtoV1(address), HttpStatus.CREATED);
     }
     @PostMapping()
-    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    @PreAuthorize("hasAnyRole('ROLE_ADMIN','ROLE_USER')")
     public ResponseEntity<AddressDtoV1> createAddressOrder(@Valid @RequestBody InputAddressDtoV1 inputAddressDtoV1) throws AppUserException {
         Address address;
         if(addressService.exists(inputAddressDtoV1)) {

@@ -6,6 +6,7 @@ import com.example.eshoppokorny.exceptions.AddressException;
 import com.example.eshoppokorny.repository.AddressRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
@@ -18,7 +19,7 @@ public class AddressServiceV1 implements AddressService{
     public List<Address> getAllAddresses() {
         return repository.findAll();
     }
-
+    @Transactional
     @Override
     public Address findAddressById(Long id) throws AddressException {
         Optional<Address> address = repository.findById(id);
@@ -34,11 +35,12 @@ public class AddressServiceV1 implements AddressService{
     }
 
     @Override
+    @Transactional
     public Address creatAddress(InputAddressDtoV1 inputAddress) {
         Address address = new Address(inputAddress.getCity(), inputAddress.getStreet(), inputAddress.getHouseNumber(), inputAddress.getZipcode());
         return repository.save(address);
     }
-
+    @Transactional
     @Override
     public Address updateAddress(InputAddressDtoV1 inputAddress, Long id) throws AddressException {
         Address address = findAddressById(id);
@@ -48,7 +50,7 @@ public class AddressServiceV1 implements AddressService{
         address.setZipcode(inputAddress.getZipcode());
         return repository.save(address);
     }
-
+    @Transactional
     @Override
     public boolean exists(InputAddressDtoV1 inputAddress) {
         List<Address> existingAddresses = repository.findByAllAttributesExceptId(
@@ -58,12 +60,12 @@ public class AddressServiceV1 implements AddressService{
                 inputAddress.getZipcode());
         return !existingAddresses.isEmpty();
     }
-
+    @Transactional
     @Override
     public List<Address> findByAllAttributes(InputAddressDtoV1 inputAddress) {
         return repository.findByAllAttributesExceptId(inputAddress.getCity(), inputAddress.getStreet(), inputAddress.getHouseNumber(), inputAddress.getZipcode());
     }
-
+    @Transactional
     @Override
     public void deleteAddress(Long id) throws AddressException {
         repository.delete(findAddressById(id));

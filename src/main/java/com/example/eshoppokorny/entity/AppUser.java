@@ -1,5 +1,6 @@
 package com.example.eshoppokorny.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -23,10 +24,12 @@ import java.util.List;
         private Date creation_date;
         private Date update_date;
 
-        @ManyToMany()
+        @ManyToMany(fetch = FetchType.EAGER)
+        @JsonIgnore
         @JoinTable(name = "app_user_roles", inverseJoinColumns = @JoinColumn(name = "role_id"), joinColumns = @JoinColumn(name = "app_user_id"))
         private List<Role> roles = new ArrayList<>();
-        @ManyToOne
+        @ManyToOne(fetch = FetchType.EAGER)
+        @JsonIgnore
         private Address address;
         @OneToMany(mappedBy = "appUser", fetch = FetchType.EAGER)
         private List<EOrder> eOrders = new ArrayList<>();

@@ -14,6 +14,7 @@ import OrderDetailsComponent from "./components/OrderDetailsComponent.jsx";
 import UserFormComponent from "./components/UserFormComponent.jsx";
 import UserProfileComponent from "./components/UserProfileComponent.jsx";
 import OrdersComponent from "./components/OrdersComponent.jsx";
+import AppUserComponent from "./components/AppUserComponent.jsx";
 
 const App = () => {
     return (
@@ -35,6 +36,7 @@ const App = () => {
                     <Route path="/register/" element={<UserFormComponent/>} />
                     <Route path="/orders/:id" element={<OrdersComponent/>} />
                     <Route path="/orders" element={<OrdersComponent/>} />
+                    <Route path="/app-users" element={<AppUserComponent/>} />
                 </Routes>
             </BrowserRouter>
     );

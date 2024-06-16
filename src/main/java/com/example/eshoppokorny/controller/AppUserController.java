@@ -33,6 +33,7 @@ public class AppUserController {
         return service.getActiveUsers(true);
     }
     @GetMapping("/app-user")
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     public ResponseEntity<List<AppUserDtoV1>> getAppUsers() {
         List<AppUser> appUsers = service.getAllAppUsers();
         List<AppUserDtoV1> appUsersDtoV1 = new ArrayList<>();

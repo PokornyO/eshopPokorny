@@ -25,6 +25,7 @@ import java.util.List;
 public class EOrderController {
     private final EOrderServiceV1 eOrderServiceV1;
     @PreAuthorize("hasRole('ROLE_USER') or hasRole('ROLE_ADMIN')")
+    @Transactional
     @PostMapping("")
     public ResponseEntity<EOrderDtoV1> create(@RequestBody InputEOrderDtoV1 inputEOrderDtoV1) throws ItemException, AddressException, AppUserException {
         return new ResponseEntity<>(EOrderMapper.mapEOrderToEOrderDtoV1(eOrderServiceV1.createOrder(inputEOrderDtoV1)), HttpStatus.CREATED);
@@ -40,7 +41,9 @@ public class EOrderController {
         }
         return ResponseEntity.ok(purchaseResponseDto);
     }
-    @PreAuthorize("hasRole('ROLE_ADMIN')")
+
+    @PreAuthorize("hasAnyRole('ROLE_ADMIN','ROLE_USER')")
+    @Transactional
     @GetMapping("/{id}")
     public ResponseEntity<EOrderDtoV1> findById(@PathVariable Long id) throws EOrderException {
         return ResponseEntity.ok(EOrderMapper.mapEOrderToEOrderDtoV1(eOrderServiceV1.findOrderById(id)));

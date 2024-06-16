@@ -8,6 +8,7 @@ import com.example.eshoppokorny.exceptions.ItemException;
 import com.example.eshoppokorny.repository.AppUserRepository;
 import com.example.eshoppokorny.repository.ItemRepository;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Base64;
 import java.util.List;
@@ -19,12 +20,12 @@ public class ItemServiceV1 implements ItemService{
     public ItemServiceV1(ItemRepository repository) {
         this.repository = repository;
     }
-
+    @Transactional
     @Override
     public List<Item> getAllItems() {
         return repository.findAll();
     }
-
+    @Transactional
     @Override
     public Item findItemById(Long id) throws ItemException {
         Optional<Item> item = repository.findById(id);
@@ -34,7 +35,7 @@ public class ItemServiceV1 implements ItemService{
         return item.get();
     }
 
-
+    @Transactional
     @Override
     public Item createItem(InputItemDtoV1 inputItem) {
         byte[] image = null;
@@ -44,7 +45,7 @@ public class ItemServiceV1 implements ItemService{
         Item item = new Item(inputItem.getPrice(), inputItem.getName(), inputItem.getInStockCount(), inputItem.getDescription(), image);
         return repository.save(item);
     }
-
+    @Transactional
     @Override
     public Item updateItem(InputItemDtoV1 inputItem, Long id) throws ItemException {
         Item item = findItemById(id);
@@ -54,7 +55,7 @@ public class ItemServiceV1 implements ItemService{
         item.setInStockCount(inputItem.getInStockCount());
         return repository.save(item);
     }
-
+    @Transactional
     @Override
     public void deleteItem(Long id) throws ItemException {
         repository.delete(findItemById(id));

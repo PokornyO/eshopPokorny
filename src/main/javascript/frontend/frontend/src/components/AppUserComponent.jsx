@@ -1,14 +1,22 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import moment from 'moment';
+import Cookies from "js-cookie";
+import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, Typography, Button } from '@mui/material';
+import { listAppUsers } from "../services/AppUserService.jsx";
 
 const AppUserList = () => {
     const [users, setUsers] = useState([]);
 
+    const isAdmin = () => {
+        const roles = Cookies.get("userRoles");
+        return roles != null && roles.includes("ROLE_ADMIN");
+    };
+
     useEffect(() => {
         const fetchData = async () => {
             try {
-                const response = await axios.get('http://localhost:9000/api/v1/app-user');
+                const response = await listAppUsers();
                 setUsers(response.data);
             } catch (error) {
                 console.error("Chyba při získávání dat:", error);
@@ -18,34 +26,69 @@ const AppUserList = () => {
         fetchData();
     }, []);
 
+    const handleDetails = (id) => {
+        // Implement the logic to show details for the user with the given id
+        console.log('Show details for user:', id);
+        // Example: navigate to details page or show modal
+    };
+
+    const handleDelete = (id) => {
+        // Implement the logic to delete the user with the given id
+        console.log('Delete user with id:', id);
+        // Example: show confirmation dialog and delete user via API
+    };
+
+    const columns = [
+        { field: 'id', headerName: 'ID', minWidth: 50 },
+        { field: 'username', headerName: 'Username', minWidth: 150 },
+        { field: 'email', headerName: 'Email', minWidth: 200 },
+        { field: 'role', headerName: 'Role', minWidth: 100 },
+        { field: 'actions', headerName: 'Actions', align: 'center', minWidth: 100 }
+    ];
+
     return (
-        <div>
-            <h1>Seznam Uživatelů</h1>
-            <table>
-                <thead>
-                <tr>
-                    <th>ID</th>
-                    <th>Uživatelské jméno</th>
-                    <th>E-mail</th>
-                    <th>Aktivní</th>
-                    <th>Datum Vytvoření</th>
-                    <th>Datum Aktualizace</th>
-                </tr>
-                </thead>
-                <tbody>
-                {users.map((user) => (
-                    <tr key={user.id}>
-                        <td>{user.id}</td>
-                        <td>{user.username}</td>
-                        <td>{user.email}</td>
-                        <td>{user.active ? 'Ano' : 'Ne'}</td>
-                        <td>{moment(user.creation_date).format('DD.MM.YYYY HH:mm')}</td>
-                        <td>{moment(user.update_date).format('DD.MM.YYYY HH:mm')}</td>
-                    </tr>
-                ))}
-                </tbody>
-            </table>
-        </div>
+        <Paper sx={{ width: '100%', overflow: 'hidden', mt: 3 }}>
+            <Typography variant="h6" component="div" sx={{ padding: 2 }}>
+                User List
+            </Typography>
+            <TableContainer sx={{ maxHeight: 440 }}>
+                <Table stickyHeader aria-label="sticky table">
+                    <TableHead>
+                        <TableRow>
+                            {columns.map((column) => (
+                                <TableCell
+                                    key={column.field}
+                                    align={column.align || 'left'}
+                                    style={{ minWidth: column.minWidth }}
+                                >
+                                    {column.headerName}
+                                </TableCell>
+                            ))}
+                        </TableRow>
+                    </TableHead>
+                    <TableBody>
+                        {users.map((user, index) => (
+                            <TableRow key={index} hover>
+                                <TableCell>{user.id}</TableCell>
+                                <TableCell>{user.username}</TableCell>
+                                <TableCell>{user.email}</TableCell>
+                                <TableCell>{user.role.name}</TableCell>
+                                {isAdmin() && (
+                                    <TableCell align="center">
+                                        <Button onClick={() => handleDetails(user.id)} variant="outlined" color="primary" sx={{ marginRight: 1 }}>
+                                            Details
+                                        </Button>
+                                        <Button onClick={() => handleDelete(user.id)} variant="outlined" color="secondary">
+                                            Delete
+                                        </Button>
+                                    </TableCell>
+                                )}
+                            </TableRow>
+                        ))}
+                    </TableBody>
+                </Table>
+            </TableContainer>
+        </Paper>
     );
 };
 

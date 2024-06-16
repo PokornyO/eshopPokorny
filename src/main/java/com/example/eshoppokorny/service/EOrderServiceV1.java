@@ -16,6 +16,7 @@ import com.example.eshoppokorny.repository.EOrderRepository;
 import com.example.eshoppokorny.repository.ItemRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -37,16 +38,17 @@ public class EOrderServiceV1 implements EOrderService{
     public List<EOrder> getAllOrders() {
         return repository.findAll();
     }
-
+    @Transactional
     @Override
     public EOrder findOrderById(Long id) throws EOrderException {
         Optional<EOrder> eOrder = repository.findById(id);
+        System.out.println(eOrder.get().getAppUser().getId());
         if(eOrder.isEmpty()) {
             throw new EOrderException("Order with id: " + id + " not found");
         }
         return eOrder.get();
     }
-
+    @Transactional
     @Override
     public EOrder createOrder(InputEOrderDtoV1 inputEOrderDtoV1) throws AppUserException, AddressException, ItemException {
         EOrder eOrder = new EOrder();
@@ -77,12 +79,12 @@ public class EOrderServiceV1 implements EOrderService{
         eOrderItemRepository.saveAll(eOrderItems);
         return eOrder;
     }
-
+    @Transactional
     @Override
     public List<EOrder> findByUserId(Long id) throws EOrderException {
         return repository.findByAppUserId(id);
     }
-
+    @Transactional
     @Override
     public void deleteOrder(Long id) throws EOrderException {
         repository.delete(findOrderById(id));

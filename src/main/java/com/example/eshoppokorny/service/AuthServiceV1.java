@@ -2,7 +2,9 @@ package com.example.eshoppokorny.service;
 
 import com.example.eshoppokorny.Model.LoginResponse;
 import com.example.eshoppokorny.entity.AppUser;
+import com.example.eshoppokorny.entity.EOrder;
 import com.example.eshoppokorny.repository.AppUserRepository;
+import com.example.eshoppokorny.repository.EOrderRepository;
 import com.example.eshoppokorny.security.JwtIssuer;
 import com.example.eshoppokorny.security.UserPrincipal;
 import lombok.RequiredArgsConstructor;
@@ -19,6 +21,7 @@ public class AuthServiceV1 implements AuthService {
     private final JwtIssuer jwtIssuer;
     private final AuthenticationManager authenticationManager;
     private final AppUserRepository appUserRepository;
+    private final EOrderRepository eOrderRepository;
     @Override
     public LoginResponse attemptLogin(String username, String password) {
         var authentication = authenticationManager.authenticate(
@@ -43,6 +46,12 @@ public class AuthServiceV1 implements AuthService {
         UserPrincipal principal = (UserPrincipal) authentication.getPrincipal();
         String username = principal.getUsername();
         AppUser user = appUserRepository.findByUsername(username);
-        return user.getId().equals(id);
+        return principal.getUserId().equals(id);
+    }
+    public boolean hasAccessToOrder(Long orderId) {
+        EOrder order = eOrderRepository.findById(orderId).orElse(null);
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        UserPrincipal principal = (UserPrincipal) authentication.getPrincipal();
+        return order != null && order.getAppUser().getId().equals(principal.getUserId());
     }
 }

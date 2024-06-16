@@ -49,6 +49,7 @@ public class WebSecurityConfig {
                         .requestMatchers("/address/user/**").permitAll()
                         .requestMatchers("/app-user").permitAll()
                         .requestMatchers("/auth/login").permitAll()
+                        .requestMatchers("/orders").permitAll()
                         .anyRequest().authenticated()
                 );
         return http.build();
