@@ -9,7 +9,7 @@ public class AppUserMapperV1 {
         if(user.getAddress() != null) {
             id = user.getAddress().getId();
         }
-        return new AppUserDtoV1(user.getId(), user.getUsername(), user.getEmail(), user.isActive(), user.getCreation_date(), user.getUpdate_date(), id);
+        return new AppUserDtoV1(user.getId(), user.getUsername(), user.getEmail(), user.isActive(), user.getCreation_date(), user.getUpdate_date(), id, user.getRoles().get(0));
     }
 
 }

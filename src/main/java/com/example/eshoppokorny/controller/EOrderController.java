@@ -13,6 +13,7 @@ import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
@@ -28,6 +29,7 @@ public class EOrderController {
     public ResponseEntity<EOrderDtoV1> create(@RequestBody InputEOrderDtoV1 inputEOrderDtoV1) throws ItemException, AddressException, AppUserException {
         return new ResponseEntity<>(EOrderMapper.mapEOrderToEOrderDtoV1(eOrderServiceV1.createOrder(inputEOrderDtoV1)), HttpStatus.CREATED);
     }
+    @Transactional
     @PreAuthorize("hasRole('ROLE_ADMIN') or @authServiceV1.hasId(#id)")
     @GetMapping("/user/{id}")
     public ResponseEntity<List<EOrderDtoV1>> findByUserId(@PathVariable Long id) throws EOrderException {
@@ -42,6 +44,17 @@ public class EOrderController {
     @GetMapping("/{id}")
     public ResponseEntity<EOrderDtoV1> findById(@PathVariable Long id) throws EOrderException {
         return ResponseEntity.ok(EOrderMapper.mapEOrderToEOrderDtoV1(eOrderServiceV1.findOrderById(id)));
+    }
+    @Transactional
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    @GetMapping()
+    public ResponseEntity<List<EOrderDtoV1>> getAllOrders() throws EOrderException {
+        List<EOrder> orders = eOrderServiceV1.getAllOrders();
+        List<EOrderDtoV1> orderDtoV1s = new ArrayList<>();
+        for(EOrder order: orders) {
+            orderDtoV1s.add(EOrderMapper.mapEOrderToEOrderDtoV1(order));
+        }
+        return ResponseEntity.ok(orderDtoV1s);
     }
 }
 

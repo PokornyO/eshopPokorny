@@ -17,5 +17,6 @@ public class InputAppUserDtoV1 {
     private String username;
     private String email;
     private String password;
+    private Long roleId;
     private boolean active;
 }

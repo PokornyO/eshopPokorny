@@ -1,17 +1,26 @@
-import React, {useEffect, useState} from 'react';
-import {useParams} from 'react-router-dom';
-import {Box, Button, Grid, Paper, TextField, Typography} from '@mui/material';
-import {createAppUser, getAppUser, updateAppUser} from '../services/AppUserService.jsx';
+import React, { useEffect, useState } from 'react';
+import { useParams } from 'react-router-dom';
+import { Box, Button, Grid, Paper, TextField, Typography, MenuItem, Select, FormControl, InputLabel } from '@mui/material';
+import { createAppUser, getAppUser, updateAppUser } from '../services/AppUserService.jsx';
+import bcrypt from 'bcryptjs';
+import Cookies from "js-cookie";
+import { getRoles } from "../services/RoleService.jsx";
+import {addAddressUser, getAddress} from "../services/AddressService.jsx";
 
 const UserForm = () => {
     const { id } = useParams();
+    const isAdmin = () => {
+        const roles = Cookies.get("userRoles");
+        return roles != null && roles.includes("ROLE_ADMIN");
+    };
     const [user, setUser] = useState({
         firstName: '',
         lastName: '',
         username: '',
         email: '',
         password: '',
-        confirmPassword: ''
+        confirmPassword: '',
+        roleId: 2
     });
     const [address, setAddress] = useState({
         city: '',
@@ -19,6 +28,7 @@ const UserForm = () => {
         houseNumber: '',
         zipcode: ''
     });
+    const [roles, setRoles] = useState([]);
     const [error, setError] = useState('');
 
     useEffect(() => {
@@ -26,20 +36,24 @@ const UserForm = () => {
             const fetchUser = async () => {
                 try {
                     const response = await getAppUser(id);
+                    const addressResponse = await getAddress(response.data.address_id)
+                    const address = addressResponse.data;
                     const userData = response.data;
+
                     setUser({
                         firstName: userData.firstName,
                         lastName: userData.lastName,
                         username: userData.username,
                         email: userData.email,
                         password: '',
-                        confirmPassword: ''
+                        confirmPassword: '',
+                        roleId: userData.role.id
                     });
                     setAddress({
-                        city: userData.city,
-                        street: userData.street,
-                        houseNumber: userData.houseNumber,
-                        zipcode: userData.zipcode
+                        city: address.city,
+                        street: address.street,
+                        houseNumber: address.houseNumber,
+                        zipcode: address.zipcode
                     });
                 } catch (error) {
                     console.error('Chyba při načítání uživatele:', error);
@@ -48,6 +62,20 @@ const UserForm = () => {
             fetchUser();
         }
     }, [id]);
+
+    useEffect(() => {
+        if (isAdmin()) {
+            const fetchRoles = async () => {
+                try {
+                    const response = await getRoles();
+                    setRoles(response.data);
+                } catch (error) {
+                    console.error('Chyba při načítání rolí:', error);
+                }
+            };
+            fetchRoles();
+        }
+    }, []);
 
     const handleUserChange = (e) => {
         const { name, value } = e.target;
@@ -71,13 +99,12 @@ const UserForm = () => {
             setError('Passwords do not match');
             return;
         }
-        user.password = await bcrypt.hash(user.password, 10);
         try {
-            const fullUserData = { ...user, ...address };
             if (id) {
-                await updateAppUser(id, fullUserData);
+                await updateAppUser(id, user);
             } else {
-                await createAppUser(fullUserData);
+                const createdUser = await createAppUser(user);
+                await addAddressUser(createdUser.data.id, address);
             }
         } catch (error) {
             console.error('Chyba při ukládání uživatele:', error);
@@ -180,6 +207,7 @@ const UserForm = () => {
                                 name="houseNumber"
                                 type="number"
                                 value={address.houseNumber}
+                                inputProps={{ min: 1 }}
                                 onChange={handleAddressChange}
                                 required
                                 fullWidth
@@ -191,11 +219,30 @@ const UserForm = () => {
                                 name="zipcode"
                                 type="number"
                                 value={address.zipcode}
+                                inputProps={{ min: 1 }}
                                 onChange={handleAddressChange}
                                 required
                                 fullWidth
                             />
                         </Grid>
+                        {isAdmin() && (
+                            <Grid item xs={12} sm={6}>
+                                <FormControl fullWidth required>
+                                    <InputLabel>Role</InputLabel>
+                                    <Select
+                                        name="roleId"
+                                        value={user.roleId}
+                                        onChange={handleUserChange}
+                                    >
+                                        {roles.map((role) => (
+                                            <MenuItem key={role.id} value={role.id}>
+                                                {role.name}
+                                            </MenuItem>
+                                        ))}
+                                    </Select>
+                                </FormControl>
+                            </Grid>
+                        )}
                     </Grid>
                     {error && (
                         <Typography color="error" sx={{ mt: 2 }}>

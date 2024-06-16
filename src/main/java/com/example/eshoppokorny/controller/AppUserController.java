@@ -4,6 +4,7 @@ import com.example.eshoppokorny.dto.AppUserDtoV1;
 import com.example.eshoppokorny.dto.InputAppUserDtoV1;
 import com.example.eshoppokorny.entity.AppUser;
 import com.example.eshoppokorny.exceptions.AppUserException;
+import com.example.eshoppokorny.exceptions.RoleException;
 import com.example.eshoppokorny.mapper.AppUserMapperV1;
 import com.example.eshoppokorny.service.AppUserService;
 import jakarta.validation.Valid;
@@ -50,13 +51,13 @@ public class AppUserController {
         return ResponseEntity.ok(AppUserMapperV1.mapAppUserToAppUserDto(service.findUserById(id)));
     }
     @PostMapping("app-user")
-    public ResponseEntity<AppUserDtoV1> createUser(@Valid @RequestBody InputAppUserDtoV1 inputUser) {
+    public ResponseEntity<AppUserDtoV1> createUser(@Valid @RequestBody InputAppUserDtoV1 inputUser) throws RoleException {
         String encodedPassword = encoder.encode(inputUser.getPassword());
         inputUser.setPassword(encodedPassword);
         return new ResponseEntity<>(AppUserMapperV1.mapAppUserToAppUserDto(service.createAppUse(inputUser)), HttpStatus.CREATED);
     }
     @PutMapping("app-user/{id}")
-    public ResponseEntity<AppUserDtoV1> updateUser(@Valid @RequestBody InputAppUserDtoV1 inputUser, @PathVariable Long id) throws AppUserException {
+    public ResponseEntity<AppUserDtoV1> updateUser(@Valid @RequestBody InputAppUserDtoV1 inputUser, @PathVariable Long id) throws AppUserException, RoleException {
         return new ResponseEntity<>(AppUserMapperV1.mapAppUserToAppUserDto(service.updateAppUser(inputUser, id)), HttpStatus.OK);
     }
     @DeleteMapping("app-user/{id}")

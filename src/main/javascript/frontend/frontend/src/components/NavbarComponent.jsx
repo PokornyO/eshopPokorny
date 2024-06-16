@@ -13,7 +13,7 @@ import {useEffect} from "react";
 
 const Navbar = () => {
     const { isAuthenticated, logout } = useAuth();
-
+    const userId = Cookies.get('userId');
 
     return (
         <AppBar position="fixed">
@@ -26,6 +26,7 @@ const Navbar = () => {
                 {isAuthenticated ? (
                     <>
                         <Button color="inherit" component={RouterLink} to="/cart">Košík</Button>
+                        <Button color="inherit" component={RouterLink} to={`/profile/${userId}`}>Profil</Button>
                         <Button color="inherit" onClick={logout}>Odhlásit</Button>
                     </>
                 ) : (

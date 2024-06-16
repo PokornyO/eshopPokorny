@@ -1,5 +1,6 @@
 package com.example.eshoppokorny.dto;
 
+import com.example.eshoppokorny.entity.Role;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 
@@ -15,4 +16,5 @@ public class AppUserDtoV1 {
     private Date creation_date;
     private Date update_date;
     private Long address_id;
+    private Role role;
 }

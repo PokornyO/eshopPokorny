@@ -2,8 +2,11 @@ package com.example.eshoppokorny.service;
 
 import com.example.eshoppokorny.dto.InputAppUserDtoV1;
 import com.example.eshoppokorny.entity.AppUser;
+import com.example.eshoppokorny.entity.Role;
 import com.example.eshoppokorny.exceptions.AppUserException;
+import com.example.eshoppokorny.exceptions.RoleException;
 import com.example.eshoppokorny.repository.AppUserRepository;
+import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.Date;
@@ -11,12 +14,11 @@ import java.util.List;
 import java.util.Optional;
 
 @Service
+@AllArgsConstructor
 public class AppUserServiceV1 implements AppUserService {
     private final AppUserRepository repository;
+    private final RoleService roleService;
 
-    public AppUserServiceV1(AppUserRepository repository) {
-        this.repository = repository;
-    }
 
     @Override
     public List<AppUser> getActiveUsers(Boolean active) {
@@ -48,18 +50,29 @@ public class AppUserServiceV1 implements AppUserService {
     }
 
     @Override
-    public AppUser createAppUse(InputAppUserDtoV1 inputUser) {
+    public AppUser createAppUse(InputAppUserDtoV1 inputUser) throws RoleException {
         AppUser user = new AppUser(inputUser.getUsername(), inputUser.getPassword(), inputUser.isActive(), new Date(), new Date());
+        Role role = roleService.findById(inputUser.getRoleId());
+        user.getRoles().clear();
+        user.getRoles().add(role);
         return repository.save(user);
     }
 
     @Override
-    public AppUser updateAppUser(InputAppUserDtoV1 appUser, Long id) throws AppUserException {
+    public AppUser updateAppUser(AppUser appUser) {
+        return repository.save(appUser);
+    }
+
+    @Override
+    public AppUser updateAppUser(InputAppUserDtoV1 appUser, Long id) throws AppUserException, RoleException {
         AppUser user = findUserById(id);
         user.setActive(appUser.isActive());
         user.setUsername(appUser.getUsername());
         user.setPassword(appUser.getPassword());
         user.setUpdate_date(new Date());
+        Role role = roleService.findById(appUser.getRoleId());
+        user.getRoles().clear();
+        user.getRoles().add(role);
         return repository.save(user);
     }
 

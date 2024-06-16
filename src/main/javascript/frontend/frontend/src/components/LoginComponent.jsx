@@ -10,6 +10,7 @@ import Cookies from "js-cookie";
 import {getLogin} from "../services/LoginService.jsx";
 import {useNavigate} from "react-router-dom";
 import {useAuth} from "../context/UseAuth.jsx";
+import bcrypt from 'bcryptjs';
 
 
 
@@ -27,7 +28,6 @@ const LoginComponent = () => {
         setLoading(true);
         setError(null);
         try {
-            setPassword(await bcrypt.hash(password, 10))
             const loginRequest = {username, password};
             const response = await getLogin(loginRequest)
             const token = response.data.token;

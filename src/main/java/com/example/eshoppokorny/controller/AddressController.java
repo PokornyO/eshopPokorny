@@ -12,6 +12,7 @@ import com.example.eshoppokorny.exceptions.AppUserException;
 import com.example.eshoppokorny.exceptions.ItemException;
 import com.example.eshoppokorny.mapper.AddressMapperV1;
 import com.example.eshoppokorny.mapper.ItemMapperV1;
+import com.example.eshoppokorny.repository.AppUserRepository;
 import com.example.eshoppokorny.service.AddressService;
 import com.example.eshoppokorny.service.AppUserServiceV1;
 import com.example.eshoppokorny.service.ItemService;
@@ -41,7 +42,6 @@ public class AddressController {
         return ResponseEntity.ok(addressDtoV1s);
     }
     @PostMapping("/user/{id}")
-    @PreAuthorize("hasRole('ROLE_ADMIN')")
     public ResponseEntity<AddressDtoV1> createAddressUser(@Valid @RequestBody InputAddressDtoV1 inputAddressDtoV1, @PathVariable Long id) throws AppUserException {
         Address address;
         if(addressService.exists(inputAddressDtoV1)) {
@@ -51,6 +51,7 @@ public class AddressController {
         }
         AppUser appUser= userService.findUserById(id);
         appUser.setAddress(address);
+        userService.updateAppUser(appUser);
         return new ResponseEntity<>(AddressMapperV1.mapAddressToAddressDtoV1(address), HttpStatus.CREATED);
     }
     @PostMapping()

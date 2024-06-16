@@ -12,6 +12,8 @@ import {Toaster} from 'react-hot-toast';
 import OrderFormComponent from "./components/OrderFormComponent.jsx";
 import OrderDetailsComponent from "./components/OrderDetailsComponent.jsx";
 import UserFormComponent from "./components/UserFormComponent.jsx";
+import UserProfileComponent from "./components/UserProfileComponent.jsx";
+import OrdersComponent from "./components/OrdersComponent.jsx";
 
 const App = () => {
     return (
@@ -28,7 +30,11 @@ const App = () => {
                     <Route path="/login" element={<LoginComponent />} />
                     <Route path="/order-details/:id" element={<OrderDetailsComponent/>} />
                     <Route path="/create-user/" element={<UserFormComponent/>} />
+                    <Route path="/edit-user/:id" element={<UserFormComponent/>} />
+                    <Route path="/profile/:id" element={<UserProfileComponent/>} />
                     <Route path="/register/" element={<UserFormComponent/>} />
+                    <Route path="/orders/:id" element={<OrdersComponent/>} />
+                    <Route path="/orders" element={<OrdersComponent/>} />
                 </Routes>
             </BrowserRouter>
     );

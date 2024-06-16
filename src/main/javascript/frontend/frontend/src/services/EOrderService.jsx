@@ -13,3 +13,13 @@ export const getOrder = (id) => axios.get(REST_API_BASE_URL + `/${id}`, {
         Authorization: `Bearer ${Cookies.get('authToken')}`
     }
 });
+export const listOrders = () => axios.get(REST_API_BASE_URL, {
+    headers: {
+        Authorization: `Bearer ${Cookies.get('authToken')}`
+    }
+});
+export const getByUserId = (id) => axios.get(REST_API_BASE_URL + "/user" + `/${id}`, {
+    headers: {
+        Authorization: `Bearer ${Cookies.get('authToken')}`
+    }
+});

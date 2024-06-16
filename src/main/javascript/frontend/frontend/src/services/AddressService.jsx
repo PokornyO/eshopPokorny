@@ -9,9 +9,7 @@ export const getAddress = (id) => axios.get(REST_API_BASE_URL + `/${id}`, {
     }
 });
 export const addAddressUser = (id, address) => axios.post(REST_API_BASE_URL+"/user" + `/${id}`, address, {
-    headers: {
-        Authorization: `Bearer ${Cookies.get('authToken')}`
-    }
+
 });
 export const addAddress = (address) => axios.post(REST_API_BASE_URL, address, {
     headers: {
