@@ -75,8 +75,10 @@ public class EOrderServiceV1 implements EOrderService{
             eOrderItems.add(eOrderItem);
         }
         eOrder.setPrice(price);
+        eOrder.setOrderItems(eOrderItems);
         repository.save(eOrder);
         eOrderItemRepository.saveAll(eOrderItems);
+        System.out.println(eOrder.getOrderItems().size());
         return eOrder;
     }
     @Transactional

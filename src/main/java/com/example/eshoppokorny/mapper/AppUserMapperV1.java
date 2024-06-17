@@ -14,7 +14,7 @@ public class AppUserMapperV1 {
         if(!user.getRoles().isEmpty()) {
             role = user.getRoles().get(0);
         }
-        return new AppUserDtoV1(user.getId(), user.getUsername(), user.getEmail(), user.isActive(), user.getCreation_date(), user.getUpdate_date(), id, role);
+        return new AppUserDtoV1(user.getId(), user.getUsername(), user.getFirstName(), user.getLastName(), user.getEmail(), user.isActive(), user.getCreation_date(), user.getUpdate_date(), id, role);
     }
 
 }

@@ -11,6 +11,8 @@ import java.util.Date;
 public class AppUserDtoV1 {
     private long id;
     private String username;
+    private String firstName;
+    private String lastName;
     private String email;
     private boolean active;
     private Date creation_date;

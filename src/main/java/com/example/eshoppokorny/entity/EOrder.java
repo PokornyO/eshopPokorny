@@ -22,14 +22,14 @@ public class EOrder {
     private Date creationDate;
     private double price;
     @JsonIgnore
-    @ManyToOne(fetch = FetchType.EAGER)
+    @ManyToOne()
     @JoinColumn(name = "appUser_id")
     private AppUser appUser;
-    @ManyToOne(fetch = FetchType.EAGER)
+    @ManyToOne()
     @JoinColumn(name = "address_id")
     @JsonIgnore
     private Address address;
-    @OneToMany(mappedBy = "order", fetch = FetchType.EAGER)
+    @OneToMany(mappedBy = "order", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     @JsonIgnore
     private List<EOrderItem> orderItems = new ArrayList<>();
 }

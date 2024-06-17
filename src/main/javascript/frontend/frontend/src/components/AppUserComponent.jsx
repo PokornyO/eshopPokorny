@@ -1,12 +1,12 @@
 import React, { useEffect, useState } from 'react';
-import axios from 'axios';
-import moment from 'moment';
 import Cookies from "js-cookie";
 import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, Typography, Button } from '@mui/material';
-import { listAppUsers } from "../services/AppUserService.jsx";
+import { deleteAppUser, listAppUsers } from "../services/AppUserService.jsx";
+import { useNavigate } from "react-router-dom";
 
 const AppUserList = () => {
     const [users, setUsers] = useState([]);
+    const navigate = useNavigate();
 
     const isAdmin = () => {
         const roles = Cookies.get("userRoles");
@@ -25,17 +25,23 @@ const AppUserList = () => {
 
         fetchData();
     }, []);
-
+    useEffect(() => {
+        if (!isAdmin()) {
+            navigate('/'); // Redirect to homepage or desired route
+        }
+    }, [navigate, isAdmin]);
     const handleDetails = (id) => {
-        // Implement the logic to show details for the user with the given id
-        console.log('Show details for user:', id);
-        // Example: navigate to details page or show modal
+        navigate(`/profile/${id}`);
     };
 
-    const handleDelete = (id) => {
-        // Implement the logic to delete the user with the given id
-        console.log('Delete user with id:', id);
-        // Example: show confirmation dialog and delete user via API
+    const handleDelete = async (userId) => {
+        try {
+            console.log(userId);
+            await deleteAppUser(userId);
+            setUsers(users.filter(user => user.id !== userId));
+        } catch (error) {
+            console.error('Error deleting user:', error);
+        }
     };
 
     const columns = [
@@ -43,7 +49,7 @@ const AppUserList = () => {
         { field: 'username', headerName: 'Username', minWidth: 150 },
         { field: 'email', headerName: 'Email', minWidth: 200 },
         { field: 'role', headerName: 'Role', minWidth: 100 },
-        { field: 'actions', headerName: 'Actions', align: 'center', minWidth: 100 }
+        { field: 'actions', headerName: '', align: 'center', minWidth: 100 }
     ];
 
     return (
@@ -76,10 +82,10 @@ const AppUserList = () => {
                                 {isAdmin() && (
                                     <TableCell align="center">
                                         <Button onClick={() => handleDetails(user.id)} variant="outlined" color="primary" sx={{ marginRight: 1 }}>
-                                            Details
+                                            Detaily
                                         </Button>
                                         <Button onClick={() => handleDelete(user.id)} variant="outlined" color="secondary">
-                                            Delete
+                                            Odebrat
                                         </Button>
                                     </TableCell>
                                 )}

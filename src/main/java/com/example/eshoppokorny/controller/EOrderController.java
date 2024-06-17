@@ -42,7 +42,7 @@ public class EOrderController {
         return ResponseEntity.ok(purchaseResponseDto);
     }
 
-    @PreAuthorize("hasAnyRole('ROLE_ADMIN','ROLE_USER')")
+    @PreAuthorize("hasRole('ROLE_ADMIN') or @authServiceV1.hasAccessToOrder(#id)")
     @Transactional
     @GetMapping("/{id}")
     public ResponseEntity<EOrderDtoV1> findById(@PathVariable Long id) throws EOrderException {
@@ -58,6 +58,13 @@ public class EOrderController {
             orderDtoV1s.add(EOrderMapper.mapEOrderToEOrderDtoV1(order));
         }
         return ResponseEntity.ok(orderDtoV1s);
+    }
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    @Transactional
+    @DeleteMapping("/{id}")
+    public ResponseEntity<EOrderDtoV1> deleteOrder(@PathVariable Long id) throws EOrderException {
+        eOrderServiceV1.deleteOrder(id);
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 }
 

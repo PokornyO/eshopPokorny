@@ -59,6 +59,8 @@ public class AppUserController {
     }
     @PutMapping("app-user/{id}")
     public ResponseEntity<AppUserDtoV1> updateUser(@Valid @RequestBody InputAppUserDtoV1 inputUser, @PathVariable Long id) throws AppUserException, RoleException {
+        String encodedPassword = encoder.encode(inputUser.getPassword());
+        inputUser.setPassword(encodedPassword);
         return new ResponseEntity<>(AppUserMapperV1.mapAppUserToAppUserDto(service.updateAppUser(inputUser, id)), HttpStatus.OK);
     }
     @DeleteMapping("app-user/{id}")

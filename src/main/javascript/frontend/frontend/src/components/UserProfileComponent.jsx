@@ -8,6 +8,10 @@ import {getAddress} from "../services/AddressService.jsx";
 const UserProfileComponent = () => {
     const navigate = useNavigate();
     const { id } = useParams();
+    const isAdmin = () => {
+        const roles = Cookies.get('userRoles');
+        return roles != null && roles.includes('ROLE_ADMIN');
+    };
     const [user, setUser] = useState({
         firstName: '',
         lastName: '',
@@ -21,12 +25,17 @@ const UserProfileComponent = () => {
         houseNumber: '',
         zipcode: ''
     });
-
+    const loggedInUserId = Cookies.get('userId');
+    useEffect(() => {
+        if (!isAdmin() && id !== loggedInUserId) {
+            navigate('/'); // Redirect to home or another appropriate route
+        }
+    }, [navigate, isAdmin, id, loggedInUserId]);
     useEffect(() => {
         if (id) {
             const fetchUser = async () => {
                 try {
-                    const response = await getAppUser(Cookies.get('userId'));
+                    const response = await getAppUser(id);
                     const addressResponse = await getAddress(response.data.address_id)
                     const userData = response.data;
                     const address = addressResponse.data;
@@ -62,18 +71,18 @@ const UserProfileComponent = () => {
     return (
         <Paper sx={{ width: '100%', padding: 3, mt: 3 }}>
             <Typography variant="h6" component="div" gutterBottom>
-                User Profile
+                Profil
             </Typography>
             <Box sx={{ flexGrow: 1 }}>
                 <Grid container spacing={2}>
                     <Grid item xs={12} sm={6}>
                         <Typography variant="body1">
-                            <strong>First Name:</strong> {user.firstName}
+                            <strong>Jméno:</strong> {user.firstName}
                         </Typography>
                     </Grid>
                     <Grid item xs={12} sm={6}>
                         <Typography variant="body1">
-                            <strong>Last Name:</strong> {user.lastName}
+                            <strong>Příjmení:</strong> {user.lastName}
                         </Typography>
                     </Grid>
                     <Grid item xs={12} sm={6}>
@@ -88,22 +97,22 @@ const UserProfileComponent = () => {
                     </Grid>
                     <Grid item xs={12} sm={6}>
                         <Typography variant="body1">
-                            <strong>City:</strong> {address.city}
+                            <strong>Město:</strong> {address.city}
                         </Typography>
                     </Grid>
                     <Grid item xs={12} sm={6}>
                         <Typography variant="body1">
-                            <strong>Street:</strong> {address.street}
+                            <strong>Ulice:</strong> {address.street}
                         </Typography>
                     </Grid>
                     <Grid item xs={12} sm={6}>
                         <Typography variant="body1">
-                            <strong>House Number:</strong> {address.houseNumber}
+                            <strong>Číslo popisné:</strong> {address.houseNumber}
                         </Typography>
                     </Grid>
                     <Grid item xs={12} sm={6}>
                         <Typography variant="body1">
-                            <strong>Zipcode:</strong> {address.zipcode}
+                            <strong>PSČ:</strong> {address.zipcode}
                         </Typography>
                     </Grid>
                 </Grid>
@@ -114,14 +123,14 @@ const UserProfileComponent = () => {
                         onClick={handleEditClick}
                         sx={{ mr: 2 }}
                     >
-                        Edit
+                        Upravit profil
                     </Button>
                     <Button
                         variant="contained"
                         color="secondary"
                         onClick={handleViewOrdersClick}
                     >
-                        View Orders
+                        Zobrazit objednávky
                     </Button>
                 </Box>
             </Box>

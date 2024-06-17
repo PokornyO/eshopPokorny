@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { Container, TextField, Button, Typography, Box, InputLabel } from "@mui/material";
 import { addProduct, updateProduct, getProduct } from "../services/ItemService.jsx";
+import Cookies from "js-cookie";
 
 const ProductForm = () => {
     const [product, setProduct] = useState({
@@ -14,7 +15,15 @@ const ProductForm = () => {
 
     const { id } = useParams();
     const navigate = useNavigate();
-
+    const isAdmin = () => {
+        const roles = Cookies.get('userRoles');
+        return roles != null && roles.includes('ROLE_ADMIN');
+    };
+    useEffect(() => {
+        if (!isAdmin()) {
+            navigate('/'); // Redirect to homepage or desired route
+        }
+    }, [navigate, isAdmin]);
     useEffect(() => {
         if (id) {
             getProduct(id).then(response => {

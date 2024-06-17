@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { useParams } from 'react-router-dom';
+import {useNavigate, useParams} from 'react-router-dom';
 import { Box, Button, Grid, Paper, TextField, Typography, MenuItem, Select, FormControl, InputLabel } from '@mui/material';
 import { createAppUser, getAppUser, updateAppUser } from '../services/AppUserService.jsx';
 import bcrypt from 'bcryptjs';
@@ -9,6 +9,8 @@ import {addAddressUser, getAddress} from "../services/AddressService.jsx";
 
 const UserForm = () => {
     const { id } = useParams();
+    const navigate = useNavigate();
+    const loggedInUserId = Cookies.get('userId');
     const isAdmin = () => {
         const roles = Cookies.get("userRoles");
         return roles != null && roles.includes("ROLE_ADMIN");
@@ -30,7 +32,11 @@ const UserForm = () => {
     });
     const [roles, setRoles] = useState([]);
     const [error, setError] = useState('');
-
+    useEffect(() => {
+        if (!isAdmin() && id !== loggedInUserId) {
+            navigate('/');
+        }
+    }, [navigate, isAdmin, id, loggedInUserId]);
     useEffect(() => {
         if (id) {
             const fetchUser = async () => {
@@ -101,7 +107,8 @@ const UserForm = () => {
         }
         try {
             if (id) {
-                await updateAppUser(id, user);
+                const updatedUser = await updateAppUser(id, user);
+                await addAddressUser(updatedUser.data.id, address);
             } else {
                 const createdUser = await createAppUser(user);
                 await addAddressUser(createdUser.data.id, address);
@@ -153,6 +160,7 @@ const UserForm = () => {
                             <TextField
                                 label="Email"
                                 name="email"
+                                type="email"
                                 value={user.email}
                                 onChange={handleUserChange}
                                 required

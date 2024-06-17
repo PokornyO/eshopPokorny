@@ -22,5 +22,5 @@ public class EOrderDtoV1 {
     private double price;
     private AppUser appUser;
     private Address address;
-    private List<EOrderItem> orderItems;
+    private List<EOrderItemDto> orderItems;
 }

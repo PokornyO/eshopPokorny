@@ -52,7 +52,7 @@ public class AppUserServiceV1 implements AppUserService {
     @Transactional
     @Override
     public AppUser createAppUse(InputAppUserDtoV1 inputUser) throws RoleException {
-        AppUser user = new AppUser(inputUser.getUsername(), inputUser.getPassword(), inputUser.isActive(), new Date(), new Date());
+        AppUser user = new AppUser(inputUser.getUsername(), inputUser.getFirstName(), inputUser.getLastName(), inputUser.getEmail(), inputUser.getPassword(), inputUser.isActive(), new Date(), new Date());
         Role role = roleService.findById(inputUser.getRoleId());
         user.getRoles().clear();
         user.getRoles().add(role);
@@ -68,7 +68,10 @@ public class AppUserServiceV1 implements AppUserService {
     public AppUser updateAppUser(InputAppUserDtoV1 appUser, Long id) throws AppUserException, RoleException {
         AppUser user = findUserById(id);
         user.setActive(appUser.isActive());
+        user.setFirstName(appUser.getFirstName());
+        user.setLastName(appUser.getLastName());
         user.setUsername(appUser.getUsername());
+        user.setEmail(appUser.getEmail());
         user.setPassword(appUser.getPassword());
         user.setUpdate_date(new Date());
         Role role = roleService.findById(appUser.getRoleId());

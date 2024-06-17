@@ -14,7 +14,7 @@ import java.util.List;
         @GeneratedValue(strategy = GenerationType.IDENTITY)
         private long id;
         private String name;
-        @ManyToMany(mappedBy = "roles", fetch = FetchType.EAGER)
+        @ManyToMany(mappedBy = "roles")
         @ToString.Exclude
         @JsonIgnore
         private List<AppUser> users = new ArrayList<>();
