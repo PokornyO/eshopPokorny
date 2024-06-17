@@ -14,7 +14,6 @@ const OrderDetails = () => {
         const fetchOrder = async () => {
             try {
                 const response = await getOrder(id);
-                const loggedInUserId = Cookies.get('userId');
                 setOrder(response.data);
                 console.log(response.data.address.houseNumber)
                 const itemsList = response.data.orderItems.map(item => ({

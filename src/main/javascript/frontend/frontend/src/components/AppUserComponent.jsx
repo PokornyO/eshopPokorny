@@ -1,18 +1,42 @@
 import React, { useEffect, useState } from 'react';
 import Cookies from "js-cookie";
 import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, Typography, Button } from '@mui/material';
-import { deleteAppUser, listAppUsers } from "../services/AppUserService.jsx";
+import {deleteAppUser, getCount, listAppUsers} from "../services/AppUserService.jsx";
 import { useNavigate } from "react-router-dom";
+
 
 const AppUserList = () => {
     const [users, setUsers] = useState([]);
     const navigate = useNavigate();
+    const [page, setPage] = useState(0);
+    const [size, setSize] = useState(9);
+    const [count, setCount] = useState(0);
 
+    const [sortBy, setSortBy] = useState("id");
+    const [sortOrder, setSortOrder] = useState("asc");
     const isAdmin = () => {
         const roles = Cookies.get("userRoles");
         return roles != null && roles.includes("ROLE_ADMIN");
     };
-
+    function countProducts() {
+        getCount()
+            .then((response) => {
+                setCount(response.data);
+            })
+            .catch((error) => {
+                console.log(error);
+            });
+    }
+    const toggleSortOrder = () => {
+        setSortOrder(prevSortOrder => prevSortOrder === "asc" ? "desc" : "asc");
+    };
+    const totalPages = Math.ceil(count / size);
+    const hasNextPage = page < totalPages - 1;
+    useEffect(() => {
+        if (!isAdmin()) {
+            navigate('/');
+        }
+    }, [navigate, isAdmin]);
     useEffect(() => {
         const fetchData = async () => {
             try {
@@ -25,11 +49,7 @@ const AppUserList = () => {
 
         fetchData();
     }, []);
-    useEffect(() => {
-        if (!isAdmin()) {
-            navigate('/'); // Redirect to homepage or desired route
-        }
-    }, [navigate, isAdmin]);
+
     const handleDetails = (id) => {
         navigate(`/profile/${id}`);
     };
@@ -43,6 +63,9 @@ const AppUserList = () => {
             console.error('Error deleting user:', error);
         }
     };
+    const handleAddUser = () => {
+        navigate('/register');
+    };
 
     const columns = [
         { field: 'id', headerName: 'ID', minWidth: 50 },
@@ -55,8 +78,18 @@ const AppUserList = () => {
     return (
         <Paper sx={{ width: '100%', overflow: 'hidden', mt: 3 }}>
             <Typography variant="h6" component="div" sx={{ padding: 2 }}>
-                User List
+                Seznam uživatelů
             </Typography>
+            {isAdmin() && (
+                <Button
+                    variant="contained"
+                    color="primary"
+                    onClick={handleAddUser}
+                    sx={{ margin: 2 }}
+                >
+                    Přidat uživatele
+                </Button>
+            )}
             <TableContainer sx={{ maxHeight: 440 }}>
                 <Table stickyHeader aria-label="sticky table">
                     <TableHead>

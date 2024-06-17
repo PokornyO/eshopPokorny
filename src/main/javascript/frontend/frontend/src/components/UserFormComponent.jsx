@@ -1,16 +1,24 @@
 import React, { useEffect, useState } from 'react';
 import {useNavigate, useParams} from 'react-router-dom';
 import { Box, Button, Grid, Paper, TextField, Typography, MenuItem, Select, FormControl, InputLabel } from '@mui/material';
-import { createAppUser, getAppUser, updateAppUser } from '../services/AppUserService.jsx';
+import {
+    createAppUser,
+    getAppUser,
+    isEmailAvailable,
+    isUsernameAvailable,
+    updateAppUser
+} from '../services/AppUserService.jsx';
 import bcrypt from 'bcryptjs';
 import Cookies from "js-cookie";
 import { getRoles } from "../services/RoleService.jsx";
 import {addAddressUser, getAddress} from "../services/AddressService.jsx";
+import toast from "react-hot-toast";
 
 const UserForm = () => {
     const { id } = useParams();
     const navigate = useNavigate();
     const loggedInUserId = Cookies.get('userId');
+
     const isAdmin = () => {
         const roles = Cookies.get("userRoles");
         return roles != null && roles.includes("ROLE_ADMIN");
@@ -31,6 +39,7 @@ const UserForm = () => {
         zipcode: ''
     });
     const [roles, setRoles] = useState([]);
+    const [previousEmail, setPreviousEmail] = useState("");
     const [error, setError] = useState('');
     useEffect(() => {
         if (!isAdmin() && id !== loggedInUserId) {
@@ -45,7 +54,7 @@ const UserForm = () => {
                     const addressResponse = await getAddress(response.data.address_id)
                     const address = addressResponse.data;
                     const userData = response.data;
-
+                    setPreviousEmail(userData.email)
                     setUser({
                         firstName: userData.firstName,
                         lastName: userData.lastName,
@@ -106,13 +115,57 @@ const UserForm = () => {
             return;
         }
         try {
+            if(id) {
+                const isEmailValid = await isEmailAvailable(user.email)
+                if(!isEmailValid.data && previousEmail !== user.email) {
+                    toast.error(`Tento email už je používán.`, {
+                        duration: 3000,
+                    });
+                    return
+                }
+
+            } else {
+                const isUsernameValid = await isUsernameAvailable(user.username)
+                if(!isUsernameValid.data) {
+                    toast.error(`Toto uživatelské jméno není k dispozici.`, {
+                        duration: 3000,
+                    });
+                    return
+                }
+                const isEmailValid = await isEmailAvailable(user.email)
+                if(!isEmailValid.data) {
+                    toast.error(`Tento email už je používán.`, {
+                        duration: 3000,
+                    });
+                    return
+                }
+            }
+
             if (id) {
                 const updatedUser = await updateAppUser(id, user);
+                const userId = updatedUser.data.id
                 await addAddressUser(updatedUser.data.id, address);
+                toast.success(`Účet byl upraven.`, {
+                    duration: 3000,
+                });
+                navigate(`/profile/${userId}`)
             } else {
                 const createdUser = await createAppUser(user);
+                const userId = createdUser.data.id
                 await addAddressUser(createdUser.data.id, address);
+                if(isAdmin()) {
+                    toast.success(`Uživatel byl úspěšně vytvořen`, {
+                        duration: 3000,
+                    });
+                    navigate(`/profile/${userId}`)
+                } else {
+                    toast.success(`Registrace byla úspěšně dokončena.`, {
+                        duration: 3000,
+                    });
+                    navigate(`/login`)
+                }
             }
+
         } catch (error) {
             console.error('Chyba při ukládání uživatele:', error);
         }

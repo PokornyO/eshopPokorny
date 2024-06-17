@@ -7,6 +7,10 @@ import com.example.eshoppokorny.exceptions.AppUserException;
 import com.example.eshoppokorny.exceptions.ItemException;
 import com.example.eshoppokorny.repository.AppUserRepository;
 import com.example.eshoppokorny.repository.ItemRepository;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -22,8 +26,10 @@ public class ItemServiceV1 implements ItemService{
     }
     @Transactional
     @Override
-    public List<Item> getAllItems() {
-        return repository.findAll();
+    public Page<Item> getAllItems(Pageable pageable, String sortBy, String sortOrder) {
+        Sort.Direction direction = sortOrder.equals("asc") ? Sort.Direction.ASC : Sort.Direction.DESC;
+        Sort sort = Sort.by(direction, sortBy);
+        return repository.findAll(PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(), sort));
     }
     @Transactional
     @Override
@@ -59,5 +65,10 @@ public class ItemServiceV1 implements ItemService{
     @Override
     public void deleteItem(Long id) throws ItemException {
         repository.delete(findItemById(id));
+    }
+
+    @Override
+    public Long getCount() {
+        return repository.count();
     }
 }

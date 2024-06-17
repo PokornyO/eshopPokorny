@@ -21,7 +21,7 @@ const ProductForm = () => {
     };
     useEffect(() => {
         if (!isAdmin()) {
-            navigate('/'); // Redirect to homepage or desired route
+            navigate('/');
         }
     }, [navigate, isAdmin]);
     useEffect(() => {

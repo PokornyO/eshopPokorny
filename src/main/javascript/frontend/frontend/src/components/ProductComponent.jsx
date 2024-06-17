@@ -1,33 +1,45 @@
-import { Card, CardContent, CardMedia, Typography } from "@mui/material";
-import {useAuth} from "../context/UseAuth.jsx";
-import TextField from "@mui/material/TextField";
-import Button from "@mui/material/Button";
-import {fixPropTypesSort} from "eslint-plugin-react/lib/util/propTypesSort.js";
+import React, { useState } from 'react';
+import { Card, CardContent, CardMedia, Typography, TextField, Button } from "@mui/material";
+import { useAuth } from "../context/UseAuth.jsx";
 import Cookies from "js-cookie";
-import {AxiosHeaders as Buffer} from "axios";
-import {useState} from "react";
+import toast from "react-hot-toast";
 
 const ProductComponent = (props) => {
-    const { isAuthenticated, logout } = useAuth();
+    const { isAuthenticated } = useAuth();
     const [quantity, setQuantity] = useState(1);
     const imageUrl = `data:image/png;base64,${props.image}`;
+
     const isAdmin = () => {
         const roles = Cookies.get("userRoles");
         return roles != null && roles.includes("ROLE_ADMIN");
     };
+
     const addToCart = () => {
         const cart = JSON.parse(localStorage.getItem('cart')) || [];
         const existingProductIndex = cart.findIndex(item => item.id === props.id);
+
+        if (quantity < 1) {
+            toast.error("Množství musí být nejméně 1 kus.", {
+                duration: 3000,
+            });
+            return;
+        }
+
         let totalQuantity = quantity;
+
         if (existingProductIndex > -1) {
             totalQuantity += cart[existingProductIndex].quantity;
         }
+
         if (totalQuantity > props.inStockCount) {
-            alert(`Na skladě je pouze ${props.inStockCount} kusů.`);
+            toast.error(`Na skladě je pouze ${props.inStockCount} kusů.`, {
+                duration: 3000,
+            });
             return;
         }
+
         if (existingProductIndex > -1) {
-            cart[existingProductIndex].quantity += quantity;
+            cart[existingProductIndex].quantity = totalQuantity;
         } else {
             cart.push({
                 id: props.id,
@@ -39,12 +51,15 @@ const ProductComponent = (props) => {
         }
 
         localStorage.setItem('cart', JSON.stringify(cart));
-        alert(`${quantity} x ${props.name} has been added to the cart.`);
-    };
-    const handleQuantityChange = (event) => {
-        setQuantity(Number(event.target.value));
+        toast.success(`${quantity} x ${props.name} bylo přidáno do košíku.`, {
+            duration: 3000,
+        });
     };
 
+    const handleQuantityChange = (event) => {
+        const value = parseInt(event.target.value);
+        setQuantity(isNaN(value) ? 1 : value);
+    };
 
     return (
         <Card style={styles.card}>
@@ -76,17 +91,17 @@ const ProductComponent = (props) => {
                     {props.description}
                 </Typography>
                 {!props.cart && isAuthenticated && isAdmin() && (
-                    <div style={{ marginTop: '10px' }}>
-                        <Button variant="outlined" color="primary" size="small" sx={styles.adminButton} onClick={props.onEdit}>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: '10px' }}>
+                        <Button variant="outlined" color="primary" size="small" onClick={props.onEdit}>
                             Upravit
                         </Button>
-                        <Button variant="outlined" color="secondary" size="small" sx={styles.adminButton} onClick={props.onDelete}>
+                        <Button variant="outlined" color="secondary" size="small" onClick={props.onDelete}>
                             Odebrat
                         </Button>
                     </div>
                 )}
                 {!props.cart && isAuthenticated && (
-                    <div>
+                    <div style={{ marginTop: '10px' }}>
                         <TextField
                             type="number"
                             label="Množství"
@@ -102,7 +117,7 @@ const ProductComponent = (props) => {
                     </div>
                 )}
                 {props.cart && (
-                    <div>
+                    <div style={{ marginTop: '10px' }}>
                         <TextField
                             type="number"
                             label="Množství"
@@ -116,13 +131,12 @@ const ProductComponent = (props) => {
                             Odebrat z košíku
                         </Button>
                     </div>
-
                 )}
             </CardContent>
         </Card>
     );
 };
-
+export default ProductComponent
 const styles = {
     card: {
         maxWidth: 345,
@@ -136,9 +150,4 @@ const styles = {
     quantityInput: {
         marginRight: "10px",
     },
-    description: {
-        marginBottom: '10px',
-    },
-};
-
-export default ProductComponent;
+}

@@ -1,4 +1,4 @@
-import {deleteProduct, listItems} from "../services/ItemService.jsx";
+import {deleteProduct, getCount, listItems} from "../services/ItemService.jsx";
 import {useEffect, useState} from "react";
 import ProductComponent from "./ProductComponent.jsx";
 import {Container, Grid} from "@mui/material";
@@ -15,13 +15,32 @@ const ItemsList = () => {
         const roles = Cookies.get("userRoles");
         return roles != null && roles.includes("ROLE_ADMIN");
     };
+    const [page, setPage] = useState(0);
+    const [size, setSize] = useState(3);
+    const [count, setCount] = useState(0);
+
+    const [sortBy, setSortBy] = useState("id");
+    const [sortOrder, setSortOrder] = useState("asc");
     function loadData() {
-        listItems().then((response) => {
+        listItems(page, size, sortBy, sortOrder).then((response) => {
             setItems(response.data)
         }).catch(error => {
             console.log(error)
         });
     }
+    function countProducts() {
+        getCount()
+            .then((response) => {
+                setCount(response.data);
+            })
+            .catch((error) => {
+                console.log(error);
+            });
+    }
+    useEffect(() => {
+        countProducts();
+        loadData();
+    }, [page, size, sortBy, sortOrder]);
     useEffect(() => {
         loadData();
     }, []);
@@ -33,6 +52,11 @@ const ItemsList = () => {
             console.error("Chyba při odstraňování položky:", error);
         }
     };
+    const toggleSortOrder = () => {
+        setSortOrder(prevSortOrder => prevSortOrder === "asc" ? "desc" : "asc");
+    };
+    const totalPages = Math.ceil(count / size);
+    const hasNextPage = page < totalPages - 1;
     const handleAddProduct = () => {
         // Navigate to the add product page
         navigate("/add-product");

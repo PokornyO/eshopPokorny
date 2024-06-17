@@ -10,6 +10,8 @@ import com.example.eshoppokorny.exceptions.ItemException;
 import com.example.eshoppokorny.mapper.EOrderMapper;
 import com.example.eshoppokorny.service.EOrderServiceV1;
 import lombok.AllArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -33,8 +35,10 @@ public class EOrderController {
     @Transactional
     @PreAuthorize("hasRole('ROLE_ADMIN') or @authServiceV1.hasId(#id)")
     @GetMapping("/user/{id}")
-    public ResponseEntity<List<EOrderDtoV1>> findByUserId(@PathVariable Long id) throws EOrderException {
-        List<EOrder> orders = eOrderServiceV1.findByUserId(id);
+    public ResponseEntity<List<EOrderDtoV1>> findByUserId(@PathVariable Long id, Pageable pageable,
+                                                          @RequestParam(required = false) String sortBy,
+                                                          @RequestParam(required = false) String sortOrder) throws EOrderException {
+        Page<EOrder> orders = eOrderServiceV1.findByUserId(id, pageable, sortBy, sortOrder);
         List<EOrderDtoV1> purchaseResponseDto = new ArrayList<>();
         for (EOrder eOrder : orders) {
             purchaseResponseDto.add(EOrderMapper.mapEOrderToEOrderDtoV1(eOrder));
@@ -51,13 +55,21 @@ public class EOrderController {
     @Transactional
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     @GetMapping()
-    public ResponseEntity<List<EOrderDtoV1>> getAllOrders() throws EOrderException {
-        List<EOrder> orders = eOrderServiceV1.getAllOrders();
+    public ResponseEntity<List<EOrderDtoV1>> getAllOrders(Pageable pageable,
+                                                          @RequestParam(required = false) String sortBy,
+                                                          @RequestParam(required = false) String sortOrder) throws EOrderException {
+        Page<EOrder> orders = eOrderServiceV1.getAllOrders(pageable,sortBy,sortOrder);
         List<EOrderDtoV1> orderDtoV1s = new ArrayList<>();
         for(EOrder order: orders) {
             orderDtoV1s.add(EOrderMapper.mapEOrderToEOrderDtoV1(order));
         }
         return ResponseEntity.ok(orderDtoV1s);
+    }
+
+    @GetMapping("/count")
+    public ResponseEntity<Long> getCount() {
+        Long count = eOrderServiceV1.getCount();
+        return ResponseEntity.ok(count);
     }
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     @Transactional

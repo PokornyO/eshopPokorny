@@ -6,7 +6,7 @@ const REST_API_BASE_URL = "http://localhost:9000/api/v1/app-user";
 export const listAppUsers = () => axios.get(REST_API_BASE_URL, {
     headers: {
         Authorization: `Bearer ${Cookies.get("authToken")}`
-    },
+    }
 });
 export const getAppUser = (id) => axios.get(REST_API_BASE_URL + `/${id}`, {
     headers: {
@@ -24,3 +24,12 @@ export const deleteAppUser = (id) => axios.delete(REST_API_BASE_URL + `/${id}`, 
         Authorization: `Bearer ${Cookies.get("authToken")}`
     }
 });
+export const getCount = () => axios.put(REST_API_BASE_URL + "/count", {
+    headers: {
+        Authorization: `Bearer ${Cookies.get("authToken")}`
+    }
+});
+export const isEmailAvailable = (email) => axios.get(REST_API_BASE_URL + "/email",
+    {params: {email}})
+export const isUsernameAvailable = (username) => axios.get(REST_API_BASE_URL + "/username",
+    {params: {username}})

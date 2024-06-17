@@ -15,6 +15,10 @@ import com.example.eshoppokorny.repository.EOrderItemRepository;
 import com.example.eshoppokorny.repository.EOrderRepository;
 import com.example.eshoppokorny.repository.ItemRepository;
 import lombok.AllArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -35,14 +39,15 @@ public class EOrderServiceV1 implements EOrderService{
     private final ItemRepository itemRepository;
 
     @Override
-    public List<EOrder> getAllOrders() {
-        return repository.findAll();
+    public Page<EOrder> getAllOrders(Pageable pageable, String sortBy, String sortOrder) {
+        Sort.Direction direction = sortOrder.equals("asc") ? Sort.Direction.ASC : Sort.Direction.DESC;
+        Sort sort = Sort.by(direction, sortBy);
+        return repository.findAllEOrders(PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(), sort));
     }
     @Transactional
     @Override
     public EOrder findOrderById(Long id) throws EOrderException {
         Optional<EOrder> eOrder = repository.findById(id);
-        System.out.println(eOrder.get().getAppUser().getId());
         if(eOrder.isEmpty()) {
             throw new EOrderException("Order with id: " + id + " not found");
         }
@@ -83,12 +88,19 @@ public class EOrderServiceV1 implements EOrderService{
     }
     @Transactional
     @Override
-    public List<EOrder> findByUserId(Long id) throws EOrderException {
-        return repository.findByAppUserId(id);
+    public Page<EOrder> findByUserId(Long id, Pageable pageable, String sortBy, String sortOrder) throws EOrderException {
+        Sort.Direction direction = sortOrder.equals("asc") ? Sort.Direction.ASC : Sort.Direction.DESC;
+        Sort sort = Sort.by(direction, sortBy);
+        return repository.findEOrderByAppUserId(id, PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(), sort));
     }
     @Transactional
     @Override
     public void deleteOrder(Long id) throws EOrderException {
         repository.delete(findOrderById(id));
+    }
+
+    @Override
+    public Long getCount() {
+        return repository.count();
     }
 }

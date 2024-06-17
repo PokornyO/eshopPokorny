@@ -10,6 +10,8 @@ import com.example.eshoppokorny.service.AppUserService;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -34,8 +36,10 @@ public class AppUserController {
     }
     @GetMapping("/app-user")
     @PreAuthorize("hasRole('ROLE_ADMIN')")
-    public ResponseEntity<List<AppUserDtoV1>> getAppUsers() {
-        List<AppUser> appUsers = service.getAllAppUsers();
+    public ResponseEntity<List<AppUserDtoV1>> getAppUsers(Pageable pageable,
+                                                          @RequestParam(required = false) String sortBy,
+                                                          @RequestParam(required = false) String sortOrder) {
+        Page<AppUser> appUsers = service.getAllAppUsers(pageable, sortBy, sortOrder);
         List<AppUserDtoV1> appUsersDtoV1 = new ArrayList<>();
         for(AppUser user: appUsers) {
             appUsersDtoV1.add(AppUserMapperV1.mapAppUserToAppUserDto(user));
@@ -68,13 +72,19 @@ public class AppUserController {
         service.deleteAppUser(id);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
-    @GetMapping("/email")
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    @GetMapping("/count")
+    public ResponseEntity<Long> getCount() {
+        Long count = service.getCount();
+        return ResponseEntity.ok(count);
+    }
+    @GetMapping("app-user/email")
     public ResponseEntity<Boolean> isEmailUnique(@RequestParam String email) {
         boolean isUnique = service.isEmailUnique(email);
         return ResponseEntity.ok(isUnique);
     }
 
-    @GetMapping("/username")
+    @GetMapping("app-user/username")
     public ResponseEntity<Boolean> isUsernameUnique(@RequestParam String username) {
         boolean isUnique = service.isUserUnique(username);
         return ResponseEntity.ok(isUnique);

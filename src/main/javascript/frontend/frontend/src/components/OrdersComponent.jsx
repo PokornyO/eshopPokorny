@@ -2,13 +2,19 @@ import React, { useEffect, useState } from 'react';
 import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, Typography, Button } from '@mui/material';
 import { useNavigate, useParams } from 'react-router-dom';
 import Cookies from 'js-cookie';
-import { deleteOrder, getByUserId, listOrders } from '../services/EOrderService.jsx';
+import {deleteOrder, getByUserId, getCount, listOrders} from '../services/EOrderService.jsx';
+
 
 const OrdersComponent = () => {
     const navigate = useNavigate();
     const { id: userIdFromParams } = useParams();
     const [orders, setOrders] = useState([]);
+    const [page, setPage] = useState(0);
+    const [size, setSize] = useState(9);
+    const [count, setCount] = useState(0);
 
+    const [sortBy, setSortBy] = useState("id");
+    const [sortOrder, setSortOrder] = useState("asc");
     useEffect(() => {
         const fetchUserOrders = async () => {
             try {
@@ -26,7 +32,20 @@ const OrdersComponent = () => {
 
         fetchUserOrders();
     }, [userIdFromParams]);
-
+    function countProducts() {
+        getCount()
+            .then((response) => {
+                setCount(response.data);
+            })
+            .catch((error) => {
+                console.log(error);
+            });
+    }
+    const toggleSortOrder = () => {
+        setSortOrder(prevSortOrder => prevSortOrder === "asc" ? "desc" : "asc");
+    };
+    const totalPages = Math.ceil(count / size);
+    const hasNextPage = page < totalPages - 1;
     const isAdmin = () => {
         const roles = Cookies.get('userRoles');
         return roles != null && roles.includes('ROLE_ADMIN');
@@ -36,7 +55,7 @@ const OrdersComponent = () => {
 
     useEffect(() => {
             if (!isAdmin() && userIdFromParams !== loggedInUserId) {
-                navigate('/'); // Redirect to home or another appropriate route
+                navigate('/');
             }
     }, [navigate, isAdmin, userIdFromParams, loggedInUserId]);
 

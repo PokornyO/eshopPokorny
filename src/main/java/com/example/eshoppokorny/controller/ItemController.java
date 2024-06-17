@@ -14,6 +14,8 @@ import com.example.eshoppokorny.service.ItemService;
 import com.example.eshoppokorny.service.ItemServiceV1;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -28,8 +30,10 @@ import java.util.List;
 public class ItemController {
     private ItemService service;
     @GetMapping()
-    public ResponseEntity<List<ItemDtoV1>> getItems() {
-        List<Item> items = service.getAllItems();
+    public ResponseEntity<List<ItemDtoV1>> getItems(Pageable pageable,
+                                                    @RequestParam(required = false) String sortBy,
+                                                    @RequestParam(required = false) String sortOrder) {
+        Page<Item> items = service.getAllItems(pageable, sortBy, sortOrder);
         List<ItemDtoV1> itemsDto = new ArrayList<>();
         for(Item item: items) {
             itemsDto.add(ItemMapperV1.mapToItemDto(item));
@@ -56,6 +60,11 @@ public class ItemController {
     public ResponseEntity<Void> deleteUser(@PathVariable Long id) throws ItemException {
         service.deleteItem(id);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+    }
+    @GetMapping("/count")
+    public ResponseEntity<Long> getCount() {
+        Long count = service.getCount();
+        return ResponseEntity.ok(count);
     }
 
 

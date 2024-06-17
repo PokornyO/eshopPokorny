@@ -5,6 +5,7 @@ import {getAppUser} from "../services/AppUserService.jsx";
 import {addAddress, getAddress} from "../services/AddressService.jsx";
 import {createOrder} from "../services/EOrderService.jsx";
 import {useNavigate} from "react-router-dom";
+import toast from "react-hot-toast";
 
 const OrderFormComponent = ({ onSubmit }) => {
     const [userinfo, setUserinfo] = useState({
@@ -78,6 +79,9 @@ const OrderFormComponent = ({ onSubmit }) => {
                 };
 
                 const response = await createOrder(orderData)
+                toast.success(`Objednávka byla úspěšně vytvořena`, {
+                    duration: 3000,
+                });
                 const id = response.data.id
                 navigate(`/order-details/${id}`);
             } catch (error) {

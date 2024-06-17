@@ -7,6 +7,10 @@ import com.example.eshoppokorny.exceptions.AppUserException;
 import com.example.eshoppokorny.exceptions.RoleException;
 import com.example.eshoppokorny.repository.AppUserRepository;
 import lombok.AllArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -32,8 +36,10 @@ public class AppUserServiceV1 implements AppUserService {
     }
 
     @Override
-    public List<AppUser> getAllAppUsers() {
-        return repository.findAll();
+    public Page<AppUser> getAllAppUsers(Pageable pageable, String sortBy, String sortOrder) {
+        Sort.Direction direction = sortOrder.equals("asc") ? Sort.Direction.ASC : Sort.Direction.DESC;
+        Sort sort = Sort.by(direction, sortBy);
+        return repository.findAllAppUsers(PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(), sort));
     }
     @Transactional
     @Override
@@ -63,6 +69,12 @@ public class AppUserServiceV1 implements AppUserService {
     public AppUser updateAppUser(AppUser appUser) {
         return repository.save(appUser);
     }
+
+    @Override
+    public Long getCount() {
+        return repository.count();
+    }
+
     @Transactional
     @Override
     public AppUser updateAppUser(InputAppUserDtoV1 appUser, Long id) throws AppUserException, RoleException {

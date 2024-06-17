@@ -28,3 +28,8 @@ export const getByUserId = (id) => axios.get(REST_API_BASE_URL + "/user" + `/${i
         Authorization: `Bearer ${Cookies.get('authToken')}`
     }
 });
+export const getCount = () => axios.put(REST_API_BASE_URL + "/count", {
+    headers: {
+        Authorization: `Bearer ${Cookies.get("authToken")}`
+    }
+});

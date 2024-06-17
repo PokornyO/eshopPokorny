@@ -8,13 +8,16 @@ import com.example.eshoppokorny.exceptions.AddressException;
 import com.example.eshoppokorny.exceptions.AppUserException;
 import com.example.eshoppokorny.exceptions.EOrderException;
 import com.example.eshoppokorny.exceptions.ItemException;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
 import java.util.List;
 
 public interface EOrderService {
-    List<EOrder> getAllOrders();
+    Page<EOrder> getAllOrders(Pageable pageable, String sortBy, String sortOrder);
     EOrder findOrderById(Long id) throws EOrderException;
     EOrder createOrder(InputEOrderDtoV1 inputEOrderDtoV1) throws AppUserException, AddressException, ItemException;
-    List<EOrder> findByUserId(Long id) throws EOrderException;
+    Page<EOrder> findByUserId(Long id, Pageable pageable, String sortBy, String sortOrder) throws EOrderException;
     void deleteOrder(Long id) throws EOrderException;
+    Long getCount();
 }

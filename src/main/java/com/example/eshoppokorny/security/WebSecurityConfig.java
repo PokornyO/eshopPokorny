@@ -45,9 +45,9 @@ public class WebSecurityConfig {
                 .securityMatcher("/**")
                 .authorizeHttpRequests(registry -> registry
                         .requestMatchers("/").permitAll()
-                        .requestMatchers("/products").permitAll()
+                        .requestMatchers("/products/**").permitAll()
                         .requestMatchers("/address/user/**").permitAll()
-                        .requestMatchers("/app-user").permitAll()
+                        .requestMatchers("/app-user/**").permitAll()
                         .requestMatchers("/auth/login").permitAll()
                         .requestMatchers("/orders").permitAll()
                         .anyRequest().authenticated()

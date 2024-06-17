@@ -28,7 +28,7 @@ const UserProfileComponent = () => {
     const loggedInUserId = Cookies.get('userId');
     useEffect(() => {
         if (!isAdmin() && id !== loggedInUserId) {
-            navigate('/'); // Redirect to home or another appropriate route
+            navigate('/');
         }
     }, [navigate, isAdmin, id, loggedInUserId]);
     useEffect(() => {
