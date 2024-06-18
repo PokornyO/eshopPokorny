@@ -1,9 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import Cookies from "js-cookie";
-import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, Typography, Button } from '@mui/material';
-import {deleteAppUser, getCount, listAppUsers} from "../services/AppUserService.jsx";
+import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, Typography, Button, Box, FormControl, InputLabel, Select, MenuItem } from '@mui/material';
+import { deleteAppUser, getCount, listAppUsers } from "../services/AppUserService.jsx";
 import { useNavigate } from "react-router-dom";
-
 
 const AppUserList = () => {
     const [users, setUsers] = useState([]);
@@ -14,11 +13,21 @@ const AppUserList = () => {
 
     const [sortBy, setSortBy] = useState("id");
     const [sortOrder, setSortOrder] = useState("asc");
+
     const isAdmin = () => {
         const roles = Cookies.get("userRoles");
         return roles != null && roles.includes("ROLE_ADMIN");
     };
-    function countProducts() {
+
+    function loadData() {
+        listAppUsers(page, size, sortBy, sortOrder).then((response) => {
+            setUsers(response.data)
+        }).catch(error => {
+            console.log(error)
+        });
+    }
+
+    function countUsers() {
         getCount()
             .then((response) => {
                 setCount(response.data);
@@ -27,28 +36,24 @@ const AppUserList = () => {
                 console.log(error);
             });
     }
-    const toggleSortOrder = () => {
-        setSortOrder(prevSortOrder => prevSortOrder === "asc" ? "desc" : "asc");
-    };
+
+    useEffect(() => {
+        countUsers();
+        loadData();
+    }, [page, size, sortBy, sortOrder]);
+
+    useEffect(() => {
+        loadData();
+    }, []);
+
     const totalPages = Math.ceil(count / size);
     const hasNextPage = page < totalPages - 1;
+
     useEffect(() => {
         if (!isAdmin()) {
             navigate('/');
         }
     }, [navigate, isAdmin]);
-    useEffect(() => {
-        const fetchData = async () => {
-            try {
-                const response = await listAppUsers();
-                setUsers(response.data);
-            } catch (error) {
-                console.error("Chyba při získávání dat:", error);
-            }
-        };
-
-        fetchData();
-    }, []);
 
     const handleDetails = (id) => {
         navigate(`/profile/${id}`);
@@ -63,8 +68,29 @@ const AppUserList = () => {
             console.error('Error deleting user:', error);
         }
     };
+
     const handleAddUser = () => {
         navigate('/register');
+    };
+
+    const handleSortByChange = (event) => {
+        setSortBy(event.target.value);
+    };
+
+    const handleSortOrderChange = (event) => {
+        setSortOrder(event.target.value);
+    };
+
+    const handleNextPage = () => {
+        if (hasNextPage) {
+            setPage(page + 1);
+        }
+    };
+
+    const handlePreviousPage = () => {
+        if (page > 0) {
+            setPage(page - 1);
+        }
     };
 
     const columns = [
@@ -90,6 +116,23 @@ const AppUserList = () => {
                     Přidat uživatele
                 </Button>
             )}
+            <Box display="flex" justifyContent="space-between" alignItems="center" mb={3} px={2}>
+                <FormControl variant="outlined" size="small">
+                    <InputLabel>Řadit podle</InputLabel>
+                    <Select value={sortBy} onChange={handleSortByChange} label="Řadit podle">
+                        <MenuItem value="id">ID</MenuItem>
+                        <MenuItem value="username">Username</MenuItem>
+                        <MenuItem value="email">Email</MenuItem>
+                    </Select>
+                </FormControl>
+                <FormControl variant="outlined" size="small">
+                    <InputLabel>Pořadí</InputLabel>
+                    <Select value={sortOrder} onChange={handleSortOrderChange} label="Pořadí">
+                        <MenuItem value="asc">Vzestupně</MenuItem>
+                        <MenuItem value="desc">Sestupně</MenuItem>
+                    </Select>
+                </FormControl>
+            </Box>
             <TableContainer sx={{ maxHeight: 440 }}>
                 <Table stickyHeader aria-label="sticky table">
                     <TableHead>
@@ -127,6 +170,15 @@ const AppUserList = () => {
                     </TableBody>
                 </Table>
             </TableContainer>
+            <Box mt={3} display="flex" justifyContent="space-between" px={2}>
+                <Button variant="contained" onClick={handlePreviousPage} disabled={page === 0}>
+                    Previous
+                </Button>
+                <Typography variant="body1">Page {page + 1} of {totalPages}</Typography>
+                <Button variant="contained" onClick={handleNextPage} disabled={!hasNextPage}>
+                    Next
+                </Button>
+            </Box>
         </Paper>
     );
 };

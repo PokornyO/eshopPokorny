@@ -57,7 +57,7 @@ const ProductForm = () => {
             } else {
                 await addProduct(product);
             }
-            navigate("/products");
+            navigate("/");
         } catch (error) {
             console.error("Chyba při ukládání produktu:", error);
         }

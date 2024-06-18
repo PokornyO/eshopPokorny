@@ -47,11 +47,12 @@ public class AppUserController {
         return ResponseEntity.ok(appUsersDtoV1);
     }
     @GetMapping("/app-user/role/{role}")
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     public List<AppUser> getUserByID(@PathVariable String role) {
         return service.findUsersByRole(role);
     }
     @GetMapping("/app-user/{id}")
-    @PreAuthorize("hasAnyRole('ROLE_ADMIN','ROLE_USER')")
+    @PreAuthorize("hasRole('ROLE_ADMIN') or @authServiceV1.hasId(#id)")
     public ResponseEntity<AppUserDtoV1> getUserById(@PathVariable Long id) throws AppUserException {
         return ResponseEntity.ok(AppUserMapperV1.mapAppUserToAppUserDto(service.findUserById(id)));
     }
@@ -62,18 +63,20 @@ public class AppUserController {
         return new ResponseEntity<>(AppUserMapperV1.mapAppUserToAppUserDto(service.createAppUse(inputUser)), HttpStatus.CREATED);
     }
     @PutMapping("app-user/{id}")
+    @PreAuthorize("hasRole('ROLE_ADMIN') or @authServiceV1.hasId(#id)")
     public ResponseEntity<AppUserDtoV1> updateUser(@Valid @RequestBody InputAppUserDtoV1 inputUser, @PathVariable Long id) throws AppUserException, RoleException {
         String encodedPassword = encoder.encode(inputUser.getPassword());
         inputUser.setPassword(encodedPassword);
         return new ResponseEntity<>(AppUserMapperV1.mapAppUserToAppUserDto(service.updateAppUser(inputUser, id)), HttpStatus.OK);
     }
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     @DeleteMapping("app-user/{id}")
     public ResponseEntity<Void> deleteUser(@PathVariable Long id) throws AppUserException {
         service.deleteAppUser(id);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
     @PreAuthorize("hasRole('ROLE_ADMIN')")
-    @GetMapping("/count")
+    @GetMapping("app-user/count")
     public ResponseEntity<Long> getCount() {
         Long count = service.getCount();
         return ResponseEntity.ok(count);

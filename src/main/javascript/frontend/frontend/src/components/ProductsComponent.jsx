@@ -16,7 +16,7 @@ const ItemsList = () => {
         return roles != null && roles.includes("ROLE_ADMIN");
     };
     const [page, setPage] = useState(0);
-    const [size, setSize] = useState(1);
+    const [size, setSize] = useState(6);
     const [count, setCount] = useState(0);
 
     const [sortBy, setSortBy] = useState("id");

@@ -83,6 +83,7 @@ const OrderFormComponent = ({ onSubmit }) => {
                     duration: 3000,
                 });
                 const id = response.data.id
+                localStorage.removeItem('cart')
                 navigate(`/order-details/${id}`);
             } catch (error) {
                 console.error('Error submitting order:', error);

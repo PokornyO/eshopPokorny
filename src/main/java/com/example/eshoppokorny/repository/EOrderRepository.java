@@ -6,6 +6,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -18,6 +19,6 @@ public interface EOrderRepository extends JpaRepository<EOrder, Long> {
     @Query("select o from EOrder o")
     Page<EOrder> findAllEOrders(Pageable pageable);
 
-    @Query("select o from EOrder o")
-    Page<EOrder> findEOrderByAppUserId(long id, Pageable pageable);
+    @Query("select o from EOrder o where o.appUser.id = :id")
+    Page<EOrder> findEOrderByAppUserId(@Param("id") long id, Pageable pageable);
 }

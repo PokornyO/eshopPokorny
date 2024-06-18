@@ -13,10 +13,23 @@ public class InputAppUserDtoV1 {
     @NotEmpty
     @Size(max = 255)
     private String firstName;
+    @NotNull
+    @NotEmpty
+    @Size(max = 255)
     private String lastName;
+    @NotNull
+    @NotEmpty
+    @Size(max = 255)
     private String username;
+    @NotNull
+    @NotEmpty
+    @Size(max = 255)
     private String email;
+    @NotNull
+    @NotEmpty
+    @Size(max = 255)
     private String password;
+    @NotNull
     private Long roleId;
     private boolean active;
 }

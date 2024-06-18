@@ -33,6 +33,7 @@ public class AddressController {
     private AddressService addressService;
     private AppUserServiceV1 userService;
     @GetMapping()
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     public ResponseEntity<List<AddressDtoV1>> getAddresses() {
         List<Address> addresses = addressService.getAllAddresses();
         List<AddressDtoV1> addressDtoV1s = new ArrayList<>();

@@ -20,7 +20,7 @@ public class EOrderDtoV1 {
     private long id;
     private Date creationDate;
     private double price;
-    private AppUser appUser;
-    private Address address;
+    private AppUserDtoV1 appUser;
+    private AddressDtoV1 address;
     private List<EOrderItemDto> orderItems;
 }

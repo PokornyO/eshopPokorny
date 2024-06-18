@@ -103,4 +103,9 @@ public class EOrderServiceV1 implements EOrderService{
     public Long getCount() {
         return repository.count();
     }
+
+    @Override
+    public Integer getCountById(long id) {
+        return repository.findByAppUserId(id).size();
+    }
 }

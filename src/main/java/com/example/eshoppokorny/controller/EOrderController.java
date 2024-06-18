@@ -9,6 +9,7 @@ import com.example.eshoppokorny.exceptions.EOrderException;
 import com.example.eshoppokorny.exceptions.ItemException;
 import com.example.eshoppokorny.mapper.EOrderMapper;
 import com.example.eshoppokorny.service.EOrderServiceV1;
+import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -16,6 +17,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
@@ -29,7 +31,7 @@ public class EOrderController {
     @PreAuthorize("hasRole('ROLE_USER') or hasRole('ROLE_ADMIN')")
     @Transactional
     @PostMapping("")
-    public ResponseEntity<EOrderDtoV1> create(@RequestBody InputEOrderDtoV1 inputEOrderDtoV1) throws ItemException, AddressException, AppUserException {
+    public ResponseEntity<EOrderDtoV1> create(@Valid @RequestBody InputEOrderDtoV1 inputEOrderDtoV1) throws ItemException, AddressException, AppUserException {
         return new ResponseEntity<>(EOrderMapper.mapEOrderToEOrderDtoV1(eOrderServiceV1.createOrder(inputEOrderDtoV1)), HttpStatus.CREATED);
     }
     @Transactional
@@ -65,10 +67,16 @@ public class EOrderController {
         }
         return ResponseEntity.ok(orderDtoV1s);
     }
-
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     @GetMapping("/count")
     public ResponseEntity<Long> getCount() {
         Long count = eOrderServiceV1.getCount();
+        return ResponseEntity.ok(count);
+    }
+    @PreAuthorize("hasRole('ROLE_ADMIN') or @authServiceV1.hasId(#id)")
+    @GetMapping("/count/{id}")
+    public ResponseEntity<Integer> getCountByUserId(@PathVariable Long id) {
+        Integer count = eOrderServiceV1.getCountById(id);
         return ResponseEntity.ok(count);
     }
     @PreAuthorize("hasRole('ROLE_ADMIN')")

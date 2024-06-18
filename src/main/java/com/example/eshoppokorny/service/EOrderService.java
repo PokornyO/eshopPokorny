@@ -20,4 +20,5 @@ public interface EOrderService {
     Page<EOrder> findByUserId(Long id, Pageable pageable, String sortBy, String sortOrder) throws EOrderException;
     void deleteOrder(Long id) throws EOrderException;
     Long getCount();
+    Integer getCountById(long id);
 }

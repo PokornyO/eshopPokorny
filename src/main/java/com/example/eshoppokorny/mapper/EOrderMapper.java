@@ -18,6 +18,6 @@ public class EOrderMapper {
         for(EOrderItem item : order.getOrderItems()) {
             itemDtoList.add(new EOrderItemDto(item.getItem().getName(), item.getCount()));
         }
-        return new EOrderDtoV1(order.getId(), order.getCreationDate(), order.getPrice(), order.getAppUser(), order.getAddress(), itemDtoList);
+        return new EOrderDtoV1(order.getId(), order.getCreationDate(), order.getPrice(), AppUserMapperV1.mapAppUserToAppUserDto(order.getAppUser()), AddressMapperV1.mapAddressToAddressDtoV1(order.getAddress()), itemDtoList);
     }
 }
