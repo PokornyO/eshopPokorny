@@ -11,6 +11,7 @@ Správa nákupního košíku: Uživatelé mohou přidávat položky do svého n�
 Potvrzení objednávky: Uživatelé mohou potvrdit své objednávky poskytnutím dodacích údajů.
 Správa profilu: Uživatelé mohou upravovat informace ve svém profilu, včetně uživatelského jména, emailu, hesla a dodací adresy.
 Historie objednávek: Uživatelé mohou prohlížet historii svých objednávek, včetně detailů minulých nákupů.
+
 Admin Funkcionality
 Administrátor má následující možnosti:
 
@@ -21,18 +22,7 @@ Zobrazení všech objednávek.
 Mazání objednávek.
 Mazání uživatelů.
 Tato funkcionalita umožňuje administrátorovi efektivně spravovat e-shop z hlediska produktů, uživatelů a objednávek.
-Běh lokálně
-Klonujte repozitář:
 
-git clone https://github.com/matthewpatthew/nnpia_eshop.git
-Spusťte projekt:
-
-Pro nastavení databáze přejděte v terminálu do adresáře obsahujícího soubor docker-compose.yaml a spusťte:
-
-docker-compose up
-Pro spuštění frontendu otevřete terminál ve složce src/main/js/frontend
-
-npm run dev
 Struktura aplikace
 Aplikace je strukturována do backendové a frontendové části:
 
