@@ -20,7 +20,7 @@ const Navbar = () => {
         <AppBar position="fixed">
             <Toolbar>
                 <Typography variant="h6" sx={{ flexGrow: 1 }}>
-                    Fantasy world
+                    League of legends shopkeeper
                 </Typography>
                 <Button color="inherit" component={RouterLink} to="/">Domů</Button>
                 {isAdmin() && (

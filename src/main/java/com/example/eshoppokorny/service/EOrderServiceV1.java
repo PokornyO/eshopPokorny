@@ -64,10 +64,11 @@ public class EOrderServiceV1 implements EOrderService{
         double price = 0;
         for(ItemCount itemCount : inputEOrderDtoV1.getProductInfo()) {
             EOrderItem eOrderItem = new EOrderItem();
+            System.out.println(itemCount.getCount());
+            System.out.println("id:" + itemCount.getItemId());
             Item item = itemService.findItemById(itemCount.getItemId());
+            System.out.println(item.getId());
             if(item.getInStockCount() < itemCount.getCount()) {
-                System.out.println(item.getInStockCount());
-                System.out.println(itemCount.getCount());
                 throw new ItemException("More items than in stock");
             } else {
                 item.setInStockCount(item.getInStockCount()- itemCount.getCount());
@@ -96,6 +97,7 @@ public class EOrderServiceV1 implements EOrderService{
     @Transactional
     @Override
     public void deleteOrder(Long id) throws EOrderException {
+        System.out.println(id);
         repository.delete(findOrderById(id));
     }
 

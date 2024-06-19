@@ -29,7 +29,6 @@ public class InputAppUserDtoV1 {
     @NotEmpty
     @Size(max = 255)
     private String password;
-    @NotNull
     private Long roleId;
     private boolean active;
 }
