@@ -1,5 +1,3 @@
-Eshop
-Vítejte v dokumentaci mé aplikace e-shopu. Tento README obsahuje základní informace o tom, jak nastavit, konfigurovat a spustit aplikaci e-shopu.
 
 Úvod
 Aplikace e-shopu je platforma pro online nakupování, která umožňuje zákazníkům prohlížet, vyhledávat a nakupovat produkty online.
